@@ -62,6 +62,16 @@ export class MadaraPlugin implements Plugin.PluginBase {
     this.options = metadata.options;
     this.filters = metadata.filters;
 
+    if (this.id === 'riwyat') {
+      this.pluginSettings = {
+        lastLoadDiagnostic: {
+          value: 'No novel opened yet.',
+          label: 'Last loading diagnostic (copy when reporting a problem)',
+          type: 'TextInput',
+        },
+      };
+    }
+
     if (this.options?.hasLocked) {
       this.pluginSettings = {
         hideLocked: {
@@ -269,14 +279,42 @@ export class MadaraPlugin implements Plugin.PluginBase {
     return await this.resolveNovelsCovers(novels);
   }
 
+  private recordLoadDiagnostic(message: string): void {
+    if (this.id !== 'riwyat') return;
+    storage.set('lastLoadDiagnostic', message);
+  }
+
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    return this.loadNovel(novelPath, this.id !== 'riwyat');
+    this.recordLoadDiagnostic('2.3.3: loading novel metadata');
+    try {
+      const novel = await this.loadNovel(novelPath, this.id !== 'riwyat');
+      this.recordLoadDiagnostic(
+        `2.3.3: metadata OK; title=${Boolean(novel.name)}; cover=${Boolean(novel.cover)}; pages=${novel.totalPages || 0}`,
+      );
+      return novel;
+    } catch (error) {
+      this.recordLoadDiagnostic(
+        `2.3.3: metadata failed: ${String(error).slice(0, 500)}`,
+      );
+      throw error;
+    }
   }
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     if (this.id !== 'riwyat' || page !== '1') return { chapters: [] };
-    const novel = await this.loadNovel(novelPath, true);
-    return { chapters: novel.chapters };
+    this.recordLoadDiagnostic('2.3.3: metadata OK; loading chapter page');
+    try {
+      const novel = await this.loadNovel(novelPath, true);
+      this.recordLoadDiagnostic(
+        `2.3.3: metadata and chapter page OK; chapters=${novel.chapters.length}`,
+      );
+      return { chapters: novel.chapters };
+    } catch (error) {
+      this.recordLoadDiagnostic(
+        `2.3.3: chapter page failed: ${String(error).slice(0, 500)}`,
+      );
+      throw error;
+    }
   }
 
   private async loadNovel(

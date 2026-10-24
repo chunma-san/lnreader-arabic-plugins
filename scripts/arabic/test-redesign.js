@@ -11,6 +11,7 @@ import './generate.js';
 const require = createRequire(import.meta.url);
 async function plugin(file, production = false) {
   if (production) {
+    const stored = new Map();
     const { outputText } = ts.transpileModule(
       fs.readFileSync(`plugins/arabic/${file}`, 'utf8'),
       {
@@ -32,7 +33,12 @@ async function plugin(file, production = false) {
       'cheerio': { load },
       'dayjs': dayjs,
       '@libs/fetch': { fetchApi: (...args) => globalThis.fetch(...args) },
-      '@libs/storage': { storage: { get: () => undefined } },
+      '@libs/storage': {
+        storage: {
+          get: key => stored.get(key),
+          set: (key, value) => stored.set(key, value),
+        },
+      },
       '@libs/defaultCover': { defaultCover: 'default-cover' },
       '@libs/novelStatus': {
         NovelStatus: {
@@ -43,11 +49,13 @@ async function plugin(file, production = false) {
         },
       },
     };
-    return Function(
+    const instance = Function(
       'require',
       'module',
       `const exports = module.exports = {};${code};return exports.default;`,
     )(name => packages[name], {});
+    instance.testDiagnostics = () => stored.get('lastLoadDiagnostic');
+    return instance;
   }
   const result = await build({
     entryPoints: [`plugins/arabic/${file}`],
@@ -215,6 +223,7 @@ try {
   };
   const riwyat = await plugin('Riwyat[madara].ts', true);
   const parsed = await riwyat.parseNovel('cont/test/');
+  assert.match(riwyat.testDiagnostics(), /metadata OK/);
   assert.equal(parsed.name, 'Fixture novel');
   assert.equal(parsed.status, 'Ongoing');
   assert.equal(parsed.cover, 'https://cenele.com/cover.jpg');
@@ -233,6 +242,25 @@ try {
   assert(!body.text().includes('Hidden decoy'));
   assert(!body.text().includes('Advertisement'));
   assert.equal(body('img').length, 1);
+  globalThis.fetch = async () => {
+    throw new Error('Fixture network failure');
+  };
+  await assert.rejects(
+    riwyat.parseNovel('cont/test/'),
+    /Fixture network failure/,
+  );
+  assert.match(
+    riwyat.testDiagnostics(),
+    /metadata failed: Error: Fixture network failure/,
+  );
+  await assert.rejects(
+    riwyat.parsePage('cont/test/', '1'),
+    /Fixture network failure/,
+  );
+  assert.match(
+    riwyat.testDiagnostics(),
+    /chapter page failed: Error: Fixture network failure/,
+  );
   console.log(
     'PASS: production Riwyat runtime, metadata without chapter requests, chapter pages, invalid AJAX fallback and readable content',
   );
