@@ -1,0 +1,182 @@
+[
+  {
+    "id": "arnovel",
+    "name": "ArNovel",
+    "site": "https://ar-no.com/",
+    "lang": "‎العربية",
+    "version": "2.3.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/ArNovel%5Bmadara%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/arnovel/icon.png"
+  },
+  {
+    "id": "azora",
+    "name": "Azora",
+    "site": "https://azoramoon.com/",
+    "lang": "‎العربية",
+    "version": "2.3.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Azora%5Bmadara%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/azora/icon.png"
+  },
+  {
+    "id": "azorafly",
+    "name": "Azora Manga",
+    "site": "https://azorafly.com/",
+    "lang": "‎العربية",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/azorafly.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/azorafly/icon.png"
+  },
+  {
+    "id": "dilartube",
+    "name": "dilar tube",
+    "site": "https://golden.rest/",
+    "lang": "‎العربية",
+    "version": "1.0.2",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/dilartube.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/dilartube/icon.png"
+  },
+  {
+    "id": "freekolnovel",
+    "name": "Free Kol Novel",
+    "site": "https://free.kolnovel.com/",
+    "lang": "‎العربية",
+    "version": "1.1.12",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/FreeKolNovel%5Blightnovelwp%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/freekolnovel/icon.png"
+  },
+  {
+    "id": "galaxynovels",
+    "name": "Galaxy Novels",
+    "site": "https://galaxynovels.com/",
+    "lang": "‎العربية",
+    "version": "1.1.1",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/galaxynovels.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/galaxynovels/icon.png"
+  },
+  {
+    "id": "hizomanga",
+    "name": "HizoManga",
+    "site": "https://hizomanga.net/",
+    "lang": "‎العربية",
+    "version": "2.3.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/HizoManga%5Bmadara%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/hizomanga/icon.png"
+  },
+  {
+    "id": "kolnovel",
+    "name": "Kol Novel",
+    "site": "https://kolnovel.com/",
+    "lang": "‎العربية",
+    "version": "1.1.22",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/KolNovel%5Blightnovelwp%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/kolnovel/icon.png"
+  },
+  {
+    "id": "markazriwayat",
+    "name": "مركز الروايات",
+    "site": "https://markazriwayat.com/",
+    "lang": "‎العربية",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Markazriwayat.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/markazriwayat/icon.png"
+  },
+  {
+    "id": "mknov",
+    "name": "مملكه الروايات",
+    "site": "https://mknov.com",
+    "lang": "‎العربية",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/mknov.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/mknov/icon.png"
+  },
+  {
+    "id": "mtlarabic",
+    "name": "مكتبة الخيال",
+    "site": "https://mtlarabic.com",
+    "lang": "‎العربية",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/mtlarabic.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/mtlarabic/icon.png"
+  },
+  {
+    "id": "novel4up",
+    "name": "Novel4Up",
+    "site": "https://novel4up.com/",
+    "lang": "‎العربية",
+    "version": "2.3.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Novel4Up%5Bmadara%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/novel4up/icon.png"
+  },
+  {
+    "id": "novelsparadise",
+    "name": "Novels Paradise",
+    "site": "https://novelsparadise.site/",
+    "lang": "‎العربية",
+    "version": "1.1.12",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/NovelsParadise%5Blightnovelwp%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/novelsparadise/icon.png"
+  },
+  {
+    "id": "olaoe",
+    "name": "Olaoe.cyou",
+    "site": "https://olaoe.cyou/",
+    "lang": "‎العربية",
+    "version": "2.3.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Olaoecyou%5Bmadara%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/olaoe/icon.png"
+  },
+  {
+    "id": "rewayahfans",
+    "name": "روايه فانز",
+    "site": "https://rewayahfans.net/",
+    "lang": "‎العربية",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/rewayahfans.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/rewayahfans/icon.png"
+  },
+  {
+    "id": "rewayatclub",
+    "name": "Rewayat Club",
+    "site": "https://rewayat.club/",
+    "lang": "‎العربية",
+    "version": "1.0.3",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/rewayatclub.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/rewayatclub/icon.png"
+  },
+  {
+    "id": "rewayatfans",
+    "name": "روايات فانز",
+    "site": "https://rewayatfans.com/",
+    "lang": "‎العربية",
+    "version": "4.2.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/rewayatfans.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/rewayatfans/icon.png"
+  },
+  {
+    "id": "riwyat",
+    "name": "Riwyat",
+    "site": "https://cenele.com/",
+    "lang": "‎العربية",
+    "version": "2.3.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Riwyat%5Bmadara%5D.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/riwyat/icon.png"
+  },
+  {
+    "id": "seanovel",
+    "name": "Seanovel",
+    "site": "https://seanovel.org/",
+    "lang": "‎العربية",
+    "version": "1.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/seanovel.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/seanovel/icon.png"
+  },
+  {
+    "id": "sunovels",
+    "name": "Sunovels",
+    "site": "https://sunovels.com/",
+    "lang": "‎العربية",
+    "version": "1.0.1",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/sunovels.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/sunovels/icon.png"
+  }
+]

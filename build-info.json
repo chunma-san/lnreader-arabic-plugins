@@ -1,0 +1,87 @@
+{
+  "source": "81f0396f96262409305590ae5e9124129a84f298",
+  "repository": "chunma-san/lnreader-arabic-plugins",
+  "branch": "plugins/v3.0.0",
+  "plugins": [
+    {
+      "id": "arnovel",
+      "version": "2.3.0"
+    },
+    {
+      "id": "azora",
+      "version": "2.3.0"
+    },
+    {
+      "id": "azorafly",
+      "version": "1.0.0"
+    },
+    {
+      "id": "dilartube",
+      "version": "1.0.2"
+    },
+    {
+      "id": "freekolnovel",
+      "version": "1.1.12"
+    },
+    {
+      "id": "galaxynovels",
+      "version": "1.1.1"
+    },
+    {
+      "id": "hizomanga",
+      "version": "2.3.0"
+    },
+    {
+      "id": "kolnovel",
+      "version": "1.1.22"
+    },
+    {
+      "id": "markazriwayat",
+      "version": "1.0.0"
+    },
+    {
+      "id": "mknov",
+      "version": "1.0.0"
+    },
+    {
+      "id": "mtlarabic",
+      "version": "1.0.0"
+    },
+    {
+      "id": "novel4up",
+      "version": "2.3.0"
+    },
+    {
+      "id": "novelsparadise",
+      "version": "1.1.12"
+    },
+    {
+      "id": "olaoe",
+      "version": "2.3.0"
+    },
+    {
+      "id": "rewayahfans",
+      "version": "1.0.0"
+    },
+    {
+      "id": "rewayatclub",
+      "version": "1.0.3"
+    },
+    {
+      "id": "rewayatfans",
+      "version": "4.2.0"
+    },
+    {
+      "id": "riwyat",
+      "version": "2.3.0"
+    },
+    {
+      "id": "seanovel",
+      "version": "1.0.0"
+    },
+    {
+      "id": "sunovels",
+      "version": "1.0.1"
+    }
+  ]
+}
