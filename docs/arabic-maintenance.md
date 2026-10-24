@@ -1,38 +1,40 @@
-# صيانة المصادر العربية
+# Maintaining Arabic sources
 
-## إصلاح مصدر
+Project documentation, tooling messages and automation use English. Arabic is the content language of the sources published by this fork.
 
-1. أعد إنتاج المشكلة على الموقع وفي الإضافة، وسجل الرواية أو الفصل المستخدم.
-2. عدّل المصدر في `plugins/arabic`، أو تعريف الموقع وقالب المولد في `plugins/multisrc` إذا كان المصدر مولداً. لا تعدّل الملفات المولدة التي تتضمن أقواساً مربعة في اسمها.
-3. زد نسخة الإضافة. للمصادر المولدة استخدم `versionIncrements` أو نسخة القالب حسب نطاق التغيير.
-4. شغّل `npm run build:arabic` ثم فحص المصدر في `npm run check:arabic -- "اسم الملف.ts"`. راجع التنسيق وجرّب النتيجة في التطبيق أو Playground.
-5. راجع الملفات الخارجة ثم ادفع التغيير إلى `master` في هذا المستودع. البناء الناجح ينشر القائمة في `plugins/v3.0.0`.
+## Fix a source
 
-فشل مصدر موجود في فحص الصحة لا يحذف المصدر تلقائياً ولا يمنع نشر إصلاح مصدر آخر. تقرير الصحة لا يكتب في كود المصادر. نجاح البناء يتحقق من الحزمة؛ اختبار الموقع والتطبيق مطلوب للتحقق من سلوك الإضافة.
+1. Reproduce the problem on the website and in the plugin. Record the novel or chapter used.
+2. Edit the source under `plugins/arabic`, or its definition and shared template under `plugins/multisrc` if it is generated. Do not edit generated files with square brackets in their names.
+3. Increment the plugin version. For generated sources, use `versionIncrements` or the template version according to the scope of the change.
+4. Run `npm run build:arabic` and `npm run check:arabic -- "PluginFile.ts"`. Check formatting and test the result in the app or Playground.
+5. Review outgoing files before pushing to this fork's `master` branch. A successful build publishes the catalog to `plugins/v3.0.0`.
 
-## إضافة موقع
+An existing source's health failure does not remove it automatically or block publication of a fix for another source. Health reports do not modify source code. Build validation checks the package; live-site and app testing establish whether a plugin works.
 
-- راجع `BLACKLIST.json` قبل البدء.
-- استخدم قالباً موجوداً إذا كان مناسباً للموقع، وحدد اللغة `Arabic` في تعريف المصدر. للمصدر المستقل ضع ملف TypeScript في `plugins/arabic`.
-- استخدم معرّفاً ثابتاً وفريداً، وضع الأيقونة العامة في المكان المحدد في [دليل البداية](quickstart.md).
-- اختبر البحث والترقيم وترتيب الفصول والمعلومات والصور ومحتوى الفصل. النشر يرفض المعرّفات المكررة أو الأصول الناقصة.
+## Add a site
 
-## متابعة المشروع الأصلي
+- Check `BLACKLIST.json` first.
+- Reuse a suitable generator and set the source language to `Arabic`. Put standalone TypeScript plugins under `plugins/arabic`.
+- Choose a stable, unique ID and add the public icon as described in the [quick start guide](quickstart.md).
+- Test search, pagination, chapter order, metadata, images and chapter content. Publication rejects duplicate IDs and missing assets.
 
-`upstream.json` يسجل آخر commit تمت مراجعته. الفحص اليومي يعرض رابط المقارنة إن تغير المصدر الأصلي. للمزامنة يراجع المسؤول الفرق، ثم يجلب تغييرات `master` من `LNReader/lnreader-plugins` ويدمج المناسب منها في فرع عمل داخل هذا الـfork. تُحل التعارضات مع الحفاظ على إصلاحات العربية، وتُعاد الفحوص قبل النشر. بعدها يُحدث `reviewedCommit` بالـcommit الذي تمت مراجعته فعلاً.
+## Follow upstream
 
-لا توجد مزامنة تستبدل الكود المخصص تلقائياً، ولا إرسال PR أو تعليق إلى المشروع الأصلي. يمكن اقتراح مساهمة لاحقاً بطلب مستقل من المالك.
+`upstream.json` records the last reviewed upstream commit. The daily check links to a comparison when upstream changes. To sync, review the difference, fetch `master` from `LNReader/lnreader-plugins` and merge the relevant changes into a working branch in this fork. Resolve conflicts while preserving Arabic source fixes, then rerun the checks before publishing. Update `reviewedCommit` to the commit that was actually reviewed.
 
-## تقارير الصحة
+Custom code is never replaced by an automatic upstream sync. No issues, comments or pull requests are submitted upstream without a separate request from the owner.
 
-الفحص المجدول يومي عند 03:40 UTC، ويمكن تشغيله يدوياً من Actions. يفحص المصادر العربية بالتتابع لتقليل الضغط على المواقع، ويحفظ تقرير JSON وملخصاً مقروءاً لمدة 14 يوماً. النتائج ليست ضماناً لكل الروايات أو الفصول أو لكل شبكات الاتصال.
+## Health reports
 
-- `PASS`: نجح مسار العينة التي جُربت.
-- `FAIL`: أعادت الإضافة نتيجة غير صالحة أو وقع خطأ يحتاج التحقيق.
-- `INCONCLUSIVE`: لم يحسم الفحص النتيجة، مثل انقطاع الاتصال أو حماية الموقع.
+The scheduled check runs daily at 03:40 UTC and can also be started manually from Actions. It checks Arabic sources sequentially to limit traffic, and retains a JSON report and readable summary for 14 days. Results cover the tested samples, not every novel, chapter or network.
 
-Workflows المشروع الأصلي غير المستخدمة تُترك معطلة في إعدادات هذا الـfork؛ العمل هنا عبر Publish Arabic Plugins وArabic Plugin Health.
+- `PASS`: the sampled reading flow succeeded.
+- `FAIL`: the plugin returned invalid data or encountered an error that needs investigation.
+- `INCONCLUSIVE`: the check could not establish the result, for example because of a network failure or site protection.
 
-## النسبة والرخصة
+Unused inherited workflows stay disabled in this fork's settings. The dedicated workflows are Publish Arabic Plugins and Arabic Plugin Health.
 
-صيانة [chunma-san](https://github.com/chunma-san)، مع الحفاظ على تاريخ المؤلفين الأصليين ورخصة MIT. عند اقتراح مساهمة مستقبلاً للمشروع الأصلي تُتبع شروطه، بما فيها ذكر المساعدة من AI في commit أو وصف PR إن استُخدمت.
+## Attribution and license
+
+Maintained by [chunma-san](https://github.com/chunma-san), preserving original authorship and the MIT license. Any future upstream contribution must follow upstream's requirements, including disclosure of AI assistance in a commit or PR description when applicable.

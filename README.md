@@ -4,37 +4,37 @@
 </p>
 <!-- CAT-COUNTER:END -->
 
-# إضافات LNReader العربية
+# LNReader Arabic Plugins
 
-[![بناء الإضافات](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/publish-plugins.yml/badge.svg)](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/publish-plugins.yml)
-[![فحص المصادر](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml/badge.svg)](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml)
+[![Build](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/publish-plugins.yml/badge.svg)](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/publish-plugins.yml)
+[![Source health](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml/badge.svg)](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml)
 
-نسخة مستقلة من [LNReader Plugins](https://github.com/LNReader/lnreader-plugins)، مخصصة لمتابعة المصادر العربية وإصلاحها وإضافة مصادر جديدة مع الوقت.
+An independent [LNReader Plugins](https://github.com/LNReader/lnreader-plugins) fork focused on Arabic novel sources. This is where we track broken sources, maintain fixes and add new sites.
 
-## إضافتها إلى التطبيق
+## Add to LNReader
 
-أضف هذا الرابط إلى قائمة مستودعات الإضافات في LNReader:
+Add this URL to the plugin repository list in LNReader:
 
 ```text
 https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.dist/plugins.min.json
 ```
 
-حدّث قائمة الإضافات، ثم ثبّت المصادر التي تريدها. هذه قائمة إضافات للتطبيق، وليست نسخة جديدة من LNReader.
+Refresh the plugin list, then install the sources you want. This repository provides plugins for LNReader; it does not replace the app.
 
-تحتفظ الإضافات بمعرّفاتها الأصلية. إذا كنت تستخدم المستودع الأصلي أيضاً، فقد يظهر المصدر نفسه في القائمتين؛ اختر نسخة هذا المستودع للمصادر التي تريد متابعة إصلاحاتنا لها. احتفظ بنسخة احتياطية من مكتبتك قبل تغيير مصدر تستخدمه بالفعل.
+Plugins keep their original IDs. If you also use the upstream repository, the same source may appear in both lists. Choose this fork's version for sources you want to follow here. Back up your library before switching an existing source.
 
-## ما الذي يشمله المستودع؟
+## What's included
 
-- قائمة تحميل تضم المصادر العربية فقط، بما فيها Kol Novel وRiwyat.
-- بناء تلقائي عند تعديل المصادر أو أدوات البناء، والتحقق من ملفات الإضافات والصور قبل نشرها.
-- فحص يومي للمصادر العربية: عرض الروايات، البحث، تفاصيل الرواية وقراءة فصل.
-- تقرير يفرّق بين إضافة تعمل، وفشل يحتاج تحقيقاً، وفحص لم يُحسم بسبب الاتصال أو حماية الموقع.
+- An Arabic-only plugin catalog, including Kol Novel and Riwyat.
+- Automatic builds when sources or build tools change, with plugin and asset validation before publication.
+- Daily checks of Arabic sources: novel listings, search, novel details and a sample chapter.
+- Reports that distinguish successful checks, failures that need investigation and inconclusive network or anti-bot results.
 
-قائمة المصادر وحدود الفحص موجودة في [ARABIC_SOURCES.md](ARABIC_SOURCES.md). وجود مصدر في القائمة لا يضمن أنه يعمل حالياً؛ تقارير [Arabic Plugin Health](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml) تعرض آخر نتائج الفحص في الملخص وملف `arabic-source-health`.
+See [ARABIC_SOURCES.md](ARABIC_SOURCES.md) for the source list and known issues. A source being listed does not mean it currently works. The [Arabic Plugin Health](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml) run summaries and `arabic-source-health` artifacts contain the latest check results.
 
-## التطوير والصيانة
+## Development
 
-يتطلب البناء Node.js 22 أو أحدث وnpm:
+Use Node.js 22 or newer and npm:
 
 ```sh
 npm ci --ignore-scripts
@@ -42,18 +42,18 @@ npm run build:arabic
 npm run check:arabic
 ```
 
-لتجربة مصدر واحد، يمكن تمرير اسم ملفه:
+To check one source, pass its filename:
 
 ```sh
 npm run check:arabic -- "Riwyat[madara].ts"
 ```
 
-نحتفظ بالمصادر والقوالب المشتركة وتاريخ المشروع الأصلي لتسهيل متابعة تحديثاته. الذي يُبنى ويُنشر هنا هو الإضافات العربية فقط. الفحص اليومي يقارن إصدار المصدر الأصلي بالنسخة المسجلة في `upstream.json`؛ دمج التغييرات يتم بعد المراجعة، وليس باستبدال إصلاحاتنا تلقائياً.
+Upstream source, shared generators and commit history are retained to make reviewed updates easier. Only Arabic plugins and their required assets are built and published here. The daily workflow compares upstream with `upstream.json`; changes are reviewed before merging so local fixes survive.
 
-لإضافة موقع أو إصلاح مصدر، راجع [دليل الصيانة](docs/arabic-maintenance.md) و[واجهة الإضافات](docs/docs.md). لا يُرسل هذا المستودع مساهمات أو تعليقات إلى المشروع الأصلي تلقائياً.
+For source fixes and new sites, read the [maintenance guide](docs/arabic-maintenance.md) and [plugin API documentation](docs/docs.md). Project documentation and automation use English; the plugin catalog is limited to Arabic content sources.
 
-## الحقوق
+## Maintainer and credits
 
-صيانة [chunma-san](https://github.com/chunma-san). مبني على عمل مطوري [LNReader Plugins](https://github.com/LNReader/lnreader-plugins) والمساهمين فيه، مع الحفاظ على حقوقهم ورخصة [MIT](LICENSE).
+Maintained by [chunma-san](https://github.com/chunma-san). Based on the work of [LNReader Plugins](https://github.com/LNReader/lnreader-plugins) developers and contributors, with original authorship and the [MIT license](LICENSE) preserved.
 
-المشروع مستقل عن LNReader وعن مواقع المحتوى. تبقى [قائمة المواقع المستبعدة](BLACKLIST.json) محفوظة وتُراجع قبل إضافة أي مصدر جديد.
+This fork is independent of LNReader and the content providers. The [source blacklist](BLACKLIST.json) is retained and checked before adding new sites. No upstream pull requests or comments are submitted automatically.

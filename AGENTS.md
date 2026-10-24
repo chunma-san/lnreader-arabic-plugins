@@ -3,7 +3,9 @@
 ## Arabic fork scope
 
 This fork is maintained by [chunma-san](https://github.com/chunma-san) for Arabic
-sources only. Use `npm run build:arabic` and `npm run check:arabic`. The published
+sources only. Keep project documentation, tooling messages and automation in English;
+Arabic applies to source content and plugin language metadata. Use
+`npm run build:arabic` and `npm run check:arabic`. The published
 catalog must contain only Arabic plugins and their required public assets. Keep
 upstream source and authorship intact for reviewed merges. Do not publish through
 the inherited all-language publishing scripts or enable inherited automation that
