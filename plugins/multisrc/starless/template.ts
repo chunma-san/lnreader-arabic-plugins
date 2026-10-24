@@ -1,4 +1,5 @@
-import { load, CheerioAPI } from 'cheerio';
+import { load, CheerioAPI, Cheerio } from 'cheerio';
+import { AnyNode } from 'domhandler';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { NovelStatus } from '@libs/novelStatus';
@@ -14,7 +15,9 @@ type StarlessMetadata = {
   filters?: Filters;
 };
 
-type Volume = { id: string; pages: number; html: string; number: number };
+const CHAPTERS_PER_PAGE = 50;
+
+type Volume = { id: string; pages: number; order: number };
 type ChapterIndex = {
   url: string;
   nonce: string;
@@ -30,6 +33,9 @@ export class StarlessPlugin implements Plugin.PagePlugin {
   icon: string;
   filters?: Filters;
   private indexes = new Map<string, ChapterIndex>();
+  imageRequestInit: Plugin.ImageRequestInit = {
+    headers: { Referer: 'https://kolnovel.com/' },
+  };
 
   constructor(source: StarlessMetadata) {
     this.id = source.id;
@@ -60,6 +66,35 @@ export class StarlessPlugin implements Plugin.PagePlugin {
     return load(await response.text());
   }
 
+  private cover(image: Cheerio<AnyNode>, width: number): string {
+    const candidates = (image.attr('data-srcset') || image.attr('srcset') || '')
+      .split(',')
+      .map(candidate => candidate.trim().match(/^(.+)\s+(\d+)w$/))
+      .filter((candidate): candidate is RegExpMatchArray => candidate !== null)
+      .map(candidate => ({ url: candidate[1], width: Number(candidate[2]) }))
+      .sort((a, b) => a.width - b.width);
+    const thumbnail =
+      candidates.find(candidate => candidate.width >= width) ||
+      candidates[candidates.length - 1];
+    const sources = [
+      thumbnail?.url,
+      image.attr('data-lazy-src'),
+      image.attr('data-src'),
+      image.attr('src'),
+    ];
+    for (const source of sources) {
+      if (!source || source.startsWith('data:')) continue;
+      try {
+        const url = new URL(source, this.site);
+        if (url.protocol === 'https:' || url.protocol === 'http:')
+          return url.href;
+      } catch {
+        continue;
+      }
+    }
+    return defaultCover;
+  }
+
   private novels($: CheerioAPI): Plugin.NovelItem[] {
     const novels: Plugin.NovelItem[] = [];
     const paths = new Set<string>();
@@ -78,7 +113,7 @@ export class StarlessPlugin implements Plugin.PagePlugin {
       novels.push({
         name,
         path,
-        cover: image.attr('data-src') || image.attr('src') || defaultCover,
+        cover: this.cover(image, 96),
       });
     });
     return novels;
@@ -135,7 +170,7 @@ export class StarlessPlugin implements Plugin.PagePlugin {
     };
   }
 
-  private async chapterIndex($: CheerioAPI): Promise<ChapterIndex> {
+  private chapterIndex($: CheerioAPI): ChapterIndex {
     const root = $('[data-kol-chapter-index]').first();
     const index: ChapterIndex = {
       url: root.attr('data-kol-volume-url') || '',
@@ -147,27 +182,26 @@ export class StarlessPlugin implements Plugin.PagePlugin {
       throw new Error('Could not find the chapter index');
     }
     index.url = this.resolveUrl(index.url);
-    const volumes = root
-      .find('[data-kol-chapter-volume]')
-      .map((_, element) => $(element).attr('data-kol-chapter-volume') || '')
-      .get();
-    for (let offset = 0; offset < volumes.length; offset += 3) {
-      const batch = await Promise.all(
-        volumes.slice(offset, offset + 3).map(async id => {
-          const result = await this.volumePage(index, id, 1);
-          const rows = load(result.html);
-          const number =
-            Number(
-              rows('[data-kol-chapter-number]')
-                .first()
-                .attr('data-kol-chapter-number'),
-            ) || 0;
-          return { id, ...result, number };
-        }),
-      );
-      index.volumes.push(...batch);
-    }
-    index.volumes.sort((a, b) => a.number - b.number);
+    root.find('[data-kol-chapter-volume]').each((position, element) => {
+      const volume = $(element);
+      const count = volume
+        .find('.kol-series-editorial__volume-count')
+        .first()
+        .text()
+        .replace(/[٠-٩]/g, digit => String(digit.charCodeAt(0) - 1632))
+        .replace(/[^0-9]/g, '');
+      const titleNumber = volume
+        .find('.kol-series-editorial__volume-title')
+        .text()
+        .replace(/[٠-٩]/g, digit => String(digit.charCodeAt(0) - 1632))
+        .match(/\d+/);
+      index.volumes.push({
+        id: volume.attr('data-kol-chapter-volume') || '',
+        pages: Math.max(1, Math.ceil(Number(count) / CHAPTERS_PER_PAGE)),
+        order: titleNumber ? Number(titleNumber[0]) : position,
+      });
+    });
+    index.volumes.sort((a, b) => a.order - b.order);
     return index;
   }
 
@@ -177,7 +211,7 @@ export class StarlessPlugin implements Plugin.PagePlugin {
     const $ = await this.page(this.resolveUrl(novelPath));
     const name = $('h1.kol-series-editorial__title').text().trim();
     if (!name) throw new Error('Could not find the novel title');
-    const index = await this.chapterIndex($);
+    const index = this.chapterIndex($);
     if (this.indexes.size >= 5) this.indexes.clear();
     this.indexes.set(novelPath, index);
     const summary = $(
@@ -188,11 +222,12 @@ export class StarlessPlugin implements Plugin.PagePlugin {
     return {
       name,
       path: novelPath,
-      cover:
-        $('.kol-series-editorial__cover img').first().attr('src') ||
-        $('img.wp-post-image').first().attr('src') ||
-        $('[itemprop="image"] img').first().attr('src') ||
-        defaultCover,
+      cover: this.cover(
+        $(
+          '.kol-series-editorial__cover img, img.wp-post-image, [itemprop="image"] img',
+        ).first(),
+        224,
+      ),
       summary: summary.text().trim(),
       author: $('a[href*="/writer/"], a[href*="/author/"]')
         .first()
@@ -211,16 +246,14 @@ export class StarlessPlugin implements Plugin.PagePlugin {
         (total, volume) => total + volume.pages,
         0,
       ),
-      chapters: (await this.parsePage(novelPath, '1')).chapters,
+      chapters: [],
     };
   }
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     let index = this.indexes.get(novelPath);
     if (!index) {
-      index = await this.chapterIndex(
-        await this.page(this.resolveUrl(novelPath)),
-      );
+      index = this.chapterIndex(await this.page(this.resolveUrl(novelPath)));
       this.indexes.set(novelPath, index);
     }
     let remaining = Number(page);
@@ -231,10 +264,11 @@ export class StarlessPlugin implements Plugin.PagePlugin {
         continue;
       }
       const actualPage = volume.pages - remaining + 1;
-      const html =
-        actualPage === 1
-          ? volume.html
-          : (await this.volumePage(index, volume.id, actualPage)).html;
+      const result = await this.volumePage(index, volume.id, actualPage);
+      if (result.pages !== volume.pages) {
+        throw new Error('The chapter index changed. Refresh the novel.');
+      }
+      const html = result.html;
       const $ = load(html);
       const chapters: Plugin.ChapterItem[] = [];
       const paths = new Set<string>();

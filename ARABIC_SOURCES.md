@@ -8,10 +8,9 @@ This inventory includes the maintained Arabic sources and their current versions
 | [Azora](https://azoramoon.com/) | `azora` | 2.3.0 |
 | [Azora Manga](https://azorafly.com/) | `azorafly` | 1.0.0 |
 | [dilar tube](https://golden.rest/) | `dilartube` | 1.0.2 |
-| [Free Kol Novel](https://free.kolnovel.com/) | `freekolnovel` | 1.2.0 |
 | [Galaxy Novels](https://galaxynovels.com/) | `galaxynovels` | 1.1.1 |
 | [HizoManga](https://hizomanga.net/) | `hizomanga` | 2.3.0 |
-| [Kol Novel](https://kolnovel.com/) | `kolnovel` | 1.2.0 |
+| [Kol Novel](https://kolnovel.com/) | `kolnovel` | 1.2.1 |
 | [Markaz Riwayat](https://markazriwayat.com/) | `markazriwayat` | 1.0.0 |
 | [Mamlakat Al Riwayat](https://mknov.com) | `mknov` | 1.0.0 |
 | [Maktabat Al Khayal](https://mtlarabic.com) | `mtlarabic` | 1.0.0 |
@@ -37,3 +36,9 @@ The inventory records included sources and versions. A successful build does not
 - Riwyat 2.3.1 reads the NHV title, cover, summary and status, removes duplicate chapter paths and extracts the story content without reader controls or hidden decoy text. If the chapter endpoint returns no chapter rows, it retains the novel page's chapter list.
 - Live checks passed listings, search, details and a chapter for all three sources. Additional checks found 75 unique ordered Kol Novel chapters across two pages, and 3,227 unique Shadow Slave chapters on Riwyat. Phone verification is still needed.
 - Offline regression checks cover listing markup changes, chapter pagination, deduplication, invalid endpoint responses, image retention and chapter cleanup. Run them with `npm run test:arabic`.
+
+## Kol Novel loading improvements: 2026-10-25
+
+Kol Novel 1.2.1 returns novel details without fetching chapter pages first. Chapter pages load on demand, and listing covers use small images from the site's `srcset` with properly encoded URLs. Detail covers use a larger thumbnail instead of the full image.
+
+Free Kol Novel has been removed from the active catalog because it redirects to Kol Novel. Existing Kol Novel links and IDs are preserved. If the retired plugin is already installed, it may remain in the app's installed list; move any library entries you still use to Kol Novel before removing it.
