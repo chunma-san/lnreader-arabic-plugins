@@ -35,7 +35,8 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-      - run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run test:arabic
       - run: npm run build:arabic
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

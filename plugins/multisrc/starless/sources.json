@@ -1,0 +1,22 @@
+[
+  {
+    "id": "kolnovel",
+    "sourceSite": "https://kolnovel.com/",
+    "sourceName": "Kol Novel",
+    "options": {
+      "lang": "Arabic"
+    },
+    "icon": "multisrc/lightnovelwp/kolnovel/icon.png",
+    "version": "1.2.0"
+  },
+  {
+    "id": "freekolnovel",
+    "sourceSite": "https://kolnovel.com/",
+    "sourceName": "Free Kol Novel",
+    "options": {
+      "lang": "Arabic"
+    },
+    "icon": "multisrc/lightnovelwp/freekolnovel/icon.png",
+    "version": "1.2.0"
+  }
+]

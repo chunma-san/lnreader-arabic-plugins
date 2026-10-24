@@ -309,6 +309,29 @@ export class MadaraPlugin implements Plugin.PluginBase {
 
     novel.cover = this.extractCover(loadedCheerio('.summary_image > a > img'));
 
+    if (this.id === 'riwyat') {
+      novel.name ||= loadedCheerio('h1.nhv-novel-title').text().trim();
+      if (novel.cover === defaultCover) {
+        novel.cover = this.extractCover(loadedCheerio('.nhv-novel-cover img'));
+      }
+      novel.author = loadedCheerio('.nhv-novel-meta a[href*="cont-author"]')
+        .first()
+        .text()
+        .trim();
+      novel.genres = loadedCheerio('.nhv-novel-genres a')
+        .map((_, element) => loadedCheerio(element).text().trim())
+        .get()
+        .join(', ');
+      const status = loadedCheerio('.nhv-novel-status strong').text().trim();
+      novel.status = status.includes('مستمرة')
+        ? NovelStatus.Ongoing
+        : status.includes('مكتملة')
+          ? NovelStatus.Completed
+          : status.includes('متوقفة')
+            ? NovelStatus.OnHiatus
+            : NovelStatus.Unknown;
+    }
+
     loadedCheerio('.post-content_item, .post-content').each(function () {
       const detailName = loadedCheerio(this).find('h5').text().trim();
       const detail =
@@ -420,6 +443,9 @@ export class MadaraPlugin implements Plugin.PluginBase {
         .join('\n\n')
         .trim();
     const chapters: Plugin.ChapterItem[] = [];
+    if (this.id === 'riwyat' && !novel.summary) {
+      novel.summary = loadedCheerio('.nhv-novel-synopsis').text().trim();
+    }
     let html = '';
 
     if (this.options?.useNewChapterEndpoint) {
@@ -492,13 +518,18 @@ export class MadaraPlugin implements Plugin.PluginBase {
       }).then((res: Response) => res.text());
     }
 
-    if (html !== '0' && html) {
+    if (
+      html !== '0' &&
+      html &&
+      (this.id !== 'riwyat' || parseHTML(html)('.wp-manga-chapter').length)
+    ) {
       loadedCheerio = parseHTML(html);
     }
 
     const chapterElements = loadedCheerio('.wp-manga-chapter');
     const totalChapters = chapterElements.length;
     const defaultDate = dayjs().format('LL');
+    const chapterPaths = new Set<string>();
 
     chapterElements.each((chapterIndex, element) => {
       const $el = loadedCheerio(element);
@@ -506,6 +537,11 @@ export class MadaraPlugin implements Plugin.PluginBase {
       const chapterUrl = $a.attr('href') || '';
 
       if (!chapterUrl || chapterUrl === '#') return;
+      const relativePath = chapterUrl.replace(/https?:\/\/.*?\//, '');
+      const chapterPath =
+        this.id === 'riwyat' ? relativePath.split('#')[0] : relativePath;
+      if (this.id === 'riwyat' && chapterPaths.has(chapterPath)) return;
+      chapterPaths.add(chapterPath);
 
       const elementClass = (element as Element).attribs?.class || '';
       const locked = elementClass.includes('premium-block');
@@ -521,13 +557,18 @@ export class MadaraPlugin implements Plugin.PluginBase {
 
       chapters.push({
         name: chapterName,
-        path: chapterUrl.replace(/https?:\/\/.*?\//, ''),
+        path: chapterPath,
         releaseTime: releaseDate || null,
         chapterNumber: totalChapters - chapterIndex,
       });
     });
 
     novel.chapters = chapters.reverse();
+    if (this.id === 'riwyat') {
+      novel.chapters.forEach((chapter, index) => {
+        chapter.chapterNumber = index + 1;
+      });
+    }
     return novel;
   }
 
@@ -538,11 +579,32 @@ export class MadaraPlugin implements Plugin.PluginBase {
       `${baseUrl}/${cleanPath}`,
       false,
     );
-    let chapterText = loadedCheerio('.text-left');
+    let chapterText =
+      this.id === 'riwyat'
+        ? loadedCheerio('.reading-content story-layer').first()
+        : loadedCheerio('.text-left');
+    if (!chapterText.length) chapterText = loadedCheerio('.text-left');
     if (!chapterText.length) chapterText = loadedCheerio('.text-right');
     if (!chapterText.length) chapterText = loadedCheerio('.entry-content');
     if (!chapterText.length) {
       chapterText = loadedCheerio('.c-blog-post > div > div:nth-child(2)');
+    }
+
+    if (this.id === 'riwyat') {
+      chapterText
+        .find(
+          'script, style, noscript, input, button, .nhv-reader-promo, .nhv-reading-chapter-head, [role="presentation"], [hidden]',
+        )
+        .remove();
+      chapterText.find('[style]').each((_, element) => {
+        const style = loadedCheerio(element).attr('style') || '';
+        if (
+          /(?:opacity\s*:\s*0(?:[;\s]|$)|display\s*:\s*none|visibility\s*:\s*hidden)/i.test(
+            style,
+          )
+        )
+          loadedCheerio(element).remove();
+      });
     }
 
     if (this.options?.customJs) {
