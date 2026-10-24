@@ -270,6 +270,19 @@ export class MadaraPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+    return this.loadNovel(novelPath, this.id !== 'riwyat');
+  }
+
+  async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
+    if (this.id !== 'riwyat' || page !== '1') return { chapters: [] };
+    const novel = await this.loadNovel(novelPath, true);
+    return { chapters: novel.chapters };
+  }
+
+  private async loadNovel(
+    novelPath: string,
+    loadChapters: boolean,
+  ): Promise<Plugin.SourceNovel> {
     const baseUrl = this.site.replace(/\/+$/, '');
     const cleanPath = novelPath.replace(/^\/+/, '');
     const novelUrl = novelPath.startsWith('http')
@@ -280,7 +293,7 @@ export class MadaraPlugin implements Plugin.PluginBase {
     let initialChapterHtmlPromise: Promise<string> | null = null;
     const chapterEndpointUrl = `${novelUrl.replace(/\/+$/, '')}/ajax/chapters/`;
 
-    if (this.options?.useNewChapterEndpoint) {
+    if (loadChapters && this.options?.useNewChapterEndpoint) {
       initialChapterHtmlPromise = fetchApi(chapterEndpointUrl, {
         method: 'POST',
         headers: this.requestHeaders,
@@ -445,6 +458,16 @@ export class MadaraPlugin implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
     if (this.id === 'riwyat' && !novel.summary) {
       novel.summary = loadedCheerio('.nhv-novel-synopsis').text().trim();
+    }
+    if (this.id === 'riwyat' && !loadChapters) {
+      if (!novel.name) {
+        throw new Error(
+          'Novel details unavailable. Please open the source in WebView.',
+        );
+      }
+      novel.chapters = [];
+      novel.totalPages = 1;
+      return novel;
     }
     let html = '';
 

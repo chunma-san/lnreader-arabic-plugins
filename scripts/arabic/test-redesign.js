@@ -3,10 +3,52 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { load } from 'cheerio';
+import ts from 'typescript';
+import { minify_sync } from 'terser';
+import dayjs from 'dayjs';
 import './generate.js';
 
 const require = createRequire(import.meta.url);
-async function plugin(file) {
+async function plugin(file, production = false) {
+  if (production) {
+    const { outputText } = ts.transpileModule(
+      fs.readFileSync(`plugins/arabic/${file}`, 'utf8'),
+      {
+        compilerOptions: {
+          target: ts.ScriptTarget.ES5,
+          module: ts.ModuleKind.CommonJS,
+          esModuleInterop: true,
+        },
+      },
+    );
+    const { code } = minify_sync(outputText, {
+      compress: { arrows: false },
+      mangle: {},
+      ecma: 5,
+      module: true,
+      toplevel: true,
+    });
+    const packages = {
+      'cheerio': { load },
+      'dayjs': dayjs,
+      '@libs/fetch': { fetchApi: (...args) => globalThis.fetch(...args) },
+      '@libs/storage': { storage: { get: () => undefined } },
+      '@libs/defaultCover': { defaultCover: 'default-cover' },
+      '@libs/novelStatus': {
+        NovelStatus: {
+          Unknown: 'Unknown',
+          Ongoing: 'Ongoing',
+          Completed: 'Completed',
+          OnHiatus: 'On Hiatus',
+        },
+      },
+    };
+    return Function(
+      'require',
+      'module',
+      `const exports = module.exports = {};${code};return exports.default;`,
+    )(name => packages[name], {});
+  }
   const result = await build({
     entryPoints: [`plugins/arabic/${file}`],
     bundle: true,
@@ -154,13 +196,15 @@ try {
 
   const details =
     '<h1 class="nhv-novel-title">Fixture novel</h1><div class="nhv-novel-cover"><img src="https://cenele.com/cover.jpg"></div><div class="nhv-novel-status"><strong>مستمرة</strong></div><div class="nhv-novel-synopsis">Fixture summary</div><li class="wp-manga-chapter"><a href="https://cenele.com/cont/test/chapter-1/">Chapter 1</a></li>';
+  let riwyatChapterRequests = 0;
   let ajax =
     '<li class="wp-manga-chapter"><a href="https://cenele.com/cont/test/chapter-2/">Chapter 2</a></li>'.repeat(
       2,
     ) +
     '<li class="wp-manga-chapter"><a href="https://cenele.com/cont/test/chapter-1/">Chapter 1</a></li>';
-  globalThis.fetch = async url =>
-    response(
+  globalThis.fetch = async url => {
+    if (String(url).endsWith('/ajax/chapters/')) riwyatChapterRequests++;
+    return response(
       url,
       String(url).endsWith('/ajax/chapters/')
         ? ajax
@@ -168,23 +212,29 @@ try {
           ? '<div class="reading-content"><story-layer><div class="nhv-reader-promo">Advertisement</div><p>Readable story.</p><span style="opacity: 0; position: fixed;">Hidden decoy</span><img src="https://cenele.com/illustration.png"></story-layer></div>'
           : details,
     );
-  const riwyat = await plugin('Riwyat[madara].ts');
+  };
+  const riwyat = await plugin('Riwyat[madara].ts', true);
   const parsed = await riwyat.parseNovel('cont/test/');
   assert.equal(parsed.name, 'Fixture novel');
   assert.equal(parsed.status, 'Ongoing');
   assert.equal(parsed.cover, 'https://cenele.com/cover.jpg');
   assert.equal(parsed.summary, 'Fixture summary');
-  assert.equal(parsed.chapters.length, 2);
-  assert.match(parsed.chapters[0].path, /chapter-1/);
+  assert.equal(parsed.totalPages, 1);
+  assert.equal(parsed.chapters.length, 0);
+  assert.equal(riwyatChapterRequests, 0);
+  const page = await riwyat.parsePage('cont/test/', '1');
+  assert.equal(page.chapters.length, 2);
+  assert.match(page.chapters[0].path, /chapter-1/);
+  assert.equal((await riwyat.parsePage('cont/test/', '2')).chapters.length, 0);
   ajax = '<html><h1>404</h1></html>';
-  assert.equal((await riwyat.parseNovel('cont/test/')).chapters.length, 1);
+  assert.equal((await riwyat.parsePage('cont/test/', '1')).chapters.length, 1);
   const body = load(await riwyat.parseChapter('cont/test/chapter-1/'));
   assert.match(body.text(), /Readable story/);
   assert(!body.text().includes('Hidden decoy'));
   assert(!body.text().includes('Advertisement'));
   assert.equal(body('img').length, 1);
   console.log(
-    'PASS: Riwyat metadata, duplicate chapters, invalid AJAX fallback and readable content cleanup',
+    'PASS: production Riwyat runtime, metadata without chapter requests, chapter pages, invalid AJAX fallback and readable content',
   );
 } finally {
   globalThis.fetch = originalFetch;
