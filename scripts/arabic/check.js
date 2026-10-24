@@ -20,13 +20,14 @@ for (const file of files) {
   );
   const output = (run.stdout || '') + (run.stderr || '');
   const table = output.split(/\r?\n/).filter(line => /^\| `/.test(line));
-  const status = run.error || !table.length
-    ? 'INCONCLUSIVE'
-    : run.status !== 0
-      ? 'FAIL'
-      : output.includes('Result: ⚠️')
-        ? 'INCONCLUSIVE'
-        : 'PASS';
+  const status =
+    run.error || !table.length
+      ? 'INCONCLUSIVE'
+      : run.status !== 0
+        ? 'FAIL'
+        : output.includes('Result: ⚠️')
+          ? 'INCONCLUSIVE'
+          : 'PASS';
   results.push({ file, status, checks: table, error: run.error?.message });
   console.log(`${status}: ${file}`);
   fs.writeFileSync(
