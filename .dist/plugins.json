@@ -38,10 +38,10 @@
   {
     "id": "freekolnovel",
     "name": "Free Kol Novel",
-    "site": "https://free.kolnovel.com/",
+    "site": "https://kolnovel.com/",
     "lang": "‎العربية",
-    "version": "1.1.12",
-    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/FreeKolNovel%5Blightnovelwp%5D.js",
+    "version": "1.2.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/FreeKolNovel%5Bstarless%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/freekolnovel/icon.png"
   },
   {
@@ -67,8 +67,8 @@
     "name": "Kol Novel",
     "site": "https://kolnovel.com/",
     "lang": "‎العربية",
-    "version": "1.1.22",
-    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/KolNovel%5Blightnovelwp%5D.js",
+    "version": "1.2.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/KolNovel%5Bstarless%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/kolnovel/icon.png"
   },
   {
@@ -157,7 +157,7 @@
     "name": "Riwyat",
     "site": "https://cenele.com/",
     "lang": "‎العربية",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Riwyat%5Bmadara%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/riwyat/icon.png"
   },
