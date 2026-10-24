@@ -1,6 +1,6 @@
 # LNReader Arabic Plugins
 
-20 Arabic plugins maintained by [chunma-san](https://github.com/chunma-san).
+19 Arabic plugins maintained by [chunma-san](https://github.com/chunma-san).
 
 Source: https://github.com/chunma-san/lnreader-arabic-plugins
 

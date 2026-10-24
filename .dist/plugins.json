@@ -36,15 +36,6 @@
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/dilartube/icon.png"
   },
   {
-    "id": "freekolnovel",
-    "name": "Free Kol Novel",
-    "site": "https://kolnovel.com/",
-    "lang": "‎العربية",
-    "version": "1.2.0",
-    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/FreeKolNovel%5Bstarless%5D.js",
-    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/freekolnovel/icon.png"
-  },
-  {
     "id": "galaxynovels",
     "name": "Galaxy Novels",
     "site": "https://galaxynovels.com/",
@@ -67,7 +58,7 @@
     "name": "Kol Novel",
     "site": "https://kolnovel.com/",
     "lang": "‎العربية",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/KolNovel%5Bstarless%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/kolnovel/icon.png"
   },
