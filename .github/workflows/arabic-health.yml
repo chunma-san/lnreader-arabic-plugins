@@ -1,0 +1,50 @@
+name: Arabic Plugin Health
+
+on:
+  schedule:
+    - cron: '40 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arabic-plugin-health
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: github.repository == 'chunma-san/lnreader-arabic-plugins'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Check upstream revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          reviewed="$(node -p "require('./upstream.json').reviewedCommit")"
+          current="$(git ls-remote https://github.com/LNReader/lnreader-plugins.git refs/heads/master | cut -f1)"
+          echo '## Upstream source' >> "$GITHUB_STEP_SUMMARY"
+          if [ "$current" = "$reviewed" ]; then
+            echo 'No new upstream commits since the recorded review.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Upstream has changed. [Review changes](https://github.com/LNReader/lnreader-plugins/compare/$reviewed...$current) before merging." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Test Arabic sources
+        run: npm run check:arabic
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: arabic-source-health
+          path: .arabic-health/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,5 +1,19 @@
 # AGENTS.md
 
+## Arabic fork scope
+
+This fork is maintained by [chunma-san](https://github.com/chunma-san) for Arabic
+sources only. Use `npm run build:arabic` and `npm run check:arabic`. The published
+catalog must contain only Arabic plugins and their required public assets. Keep
+upstream source and authorship intact for reviewed merges. Do not publish through
+the inherited all-language publishing scripts or enable inherited automation that
+does not serve this fork. Do not open upstream issues, comments or pull requests
+unless the owner explicitly authorizes that contribution.
+
+Record reviewed upstream commits in `upstream.json` only after reviewing their
+changes. Live checks must distinguish a source failure from an inconclusive
+network or anti-bot result. Build success does not establish live-site health.
+
 ## Repository overview
 
 This repository contains the community-maintained source plugins for LNReader. Most changes are

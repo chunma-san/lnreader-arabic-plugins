@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.production.json",
+  "compilerOptions": {
+    "rootDir": "./plugins",
+    "outDir": "./.arabic-build",
+    "allowJs": false
+  },
+  "include": ["plugins/arabic/**/*.ts"],
+  "exclude": ["plugins/**/*.broken.ts", "node_modules"]
+}

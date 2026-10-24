@@ -19,3 +19,7 @@ broken-sites-report.json
 .agents/
 .claude/
 .cursor/
+
+.arabic-build/
+.arabic-release/
+.arabic-health/

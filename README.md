@@ -1,70 +1,59 @@
-# LNReader Plugins
-
-<p>
-<img alt="Total number of available plugins" src="https://raw.githubusercontent.com/LNReader/lnreader-plugins/plugins/v3.0.0/total.svg">
-<img alt="Open plugin requests" src="https://img.shields.io/github/issues/lnreader/lnreader-plugins/plugin%20request?color=success&label=plugin%20requests">
-<img alt="Open bug reports" src="https://img.shields.io/github/issues/lnreader/lnreader-plugins/bug?color=red&label=bugs">
+<!-- CAT-COUNTER:START -->
+<p align="center">
+  <img src="https://count.himiku.com/@chunma-lnreader-arabic-plugins?theme=capoo-2&amp;padding=6&amp;scale=0.8&amp;darkmode=1" alt="Cat visits counter" />
 </p>
+<!-- CAT-COUNTER:END -->
 
-Community-driven plugin repository for [LNReader](https://github.com/LNReader/lnreader). This repository hosts plugins and manages related issues and requests.
+# إضافات LNReader العربية
 
-## Quick Start
+[![بناء الإضافات](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/publish-plugins.yml/badge.svg)](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/publish-plugins.yml)
+[![فحص المصادر](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml/badge.svg)](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml)
 
-**Prerequisites:** Node.js >= 22
+نسخة مستقلة من [LNReader Plugins](https://github.com/LNReader/lnreader-plugins)، مخصصة لمتابعة المصادر العربية وإصلاحها وإضافة مصادر جديدة مع الوقت.
 
-```bash
-npm install
-npm run dev:start
+## إضافتها إلى التطبيق
+
+أضف هذا الرابط إلى قائمة مستودعات الإضافات في LNReader:
+
+```text
+https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.dist/plugins.min.json
 ```
 
-## Documentation
+حدّث قائمة الإضافات، ثم ثبّت المصادر التي تريدها. هذه قائمة إضافات للتطبيق، وليست نسخة جديدة من LNReader.
 
-- **[Quick Start Guide](./docs/quickstart.md)** - Create your first plugin
-- **[Plugin Development](./docs/docs.md)** - Complete API reference
-- **[Testing Guide](./docs/website-tutorial.md)** - Test plugins using the web interface
-- **[Live Check](./docs/testing.md)** - Required `npm run check:plugin` check before opening a PR
-- **[Komga Plugin](./docs/komga-plugin.md)** - Self-hosted server integration
+تحتفظ الإضافات بمعرّفاتها الأصلية. إذا كنت تستخدم المستودع الأصلي أيضاً، فقد يظهر المصدر نفسه في القائمتين؛ اختر نسخة هذا المستودع للمصادر التي تريد متابعة إصلاحاتنا لها. احتفظ بنسخة احتياطية من مكتبتك قبل تغيير مصدر تستخدمه بالفعل.
 
-## Testing Methods
+## ما الذي يشمله المستودع؟
 
-### Web Interface
+- قائمة تحميل تضم المصادر العربية فقط، بما فيها Kol Novel وRiwyat.
+- بناء تلقائي عند تعديل المصادر أو أدوات البناء، والتحقق من ملفات الإضافات والصور قبل نشرها.
+- فحص يومي للمصادر العربية: عرض الروايات، البحث، تفاصيل الرواية وقراءة فصل.
+- تقرير يفرّق بين إضافة تعمل، وفشل يحتاج تحقيقاً، وفحص لم يُحسم بسبب الاتصال أو حماية الموقع.
 
-```bash
-npm run dev:start
+قائمة المصادر وحدود الفحص موجودة في [ARABIC_SOURCES.md](ARABIC_SOURCES.md). وجود مصدر في القائمة لا يضمن أنه يعمل حالياً؛ تقارير [Arabic Plugin Health](https://github.com/chunma-san/lnreader-arabic-plugins/actions/workflows/arabic-health.yml) تعرض آخر نتائج الفحص في الملخص وملف `arabic-source-health`.
+
+## التطوير والصيانة
+
+يتطلب البناء Node.js 22 أو أحدث وnpm:
+
+```sh
+npm ci --ignore-scripts
+npm run build:arabic
+npm run check:arabic
 ```
 
-Open [localhost:3000](http://localhost:3000) to test plugins interactively. See the [testing guide](./docs/website-tutorial.md) for details.
+لتجربة مصدر واحد، يمكن تمرير اسم ملفه:
 
-The issue-report panel uses `VITE_ISSUE_INDEX_URL` when set. Add it to `.env.local` to use another index URL:
-
-```env
-VITE_ISSUE_INDEX_URL=https://example.com/issue-index.min.json
+```sh
+npm run check:arabic -- "Riwyat[madara].ts"
 ```
 
-If unset, the playground uses `https://raw.githubusercontent.com/LNReader/lnreader-plugins/issue-index/issue-index.min.json`.
+نحتفظ بالمصادر والقوالب المشتركة وتاريخ المشروع الأصلي لتسهيل متابعة تحديثاته. الذي يُبنى ويُنشر هنا هو الإضافات العربية فقط. الفحص اليومي يقارن إصدار المصدر الأصلي بالنسخة المسجلة في `upstream.json`؛ دمج التغييرات يتم بعد المراجعة، وليس باستبدال إصلاحاتنا تلقائياً.
 
-Request or validation failures show an error with a Retry action. The playground does not use a bundled local snapshot.
+لإضافة موقع أو إصلاح مصدر، راجع [دليل الصيانة](docs/arabic-maintenance.md) و[واجهة الإضافات](docs/docs.md). لا يُرسل هذا المستودع مساهمات أو تعليقات إلى المشروع الأصلي تلقائياً.
 
-### Mobile App
+## الحقوق
 
-**From GitHub (Automated):**
+صيانة [chunma-san](https://github.com/chunma-san). مبني على عمل مطوري [LNReader Plugins](https://github.com/LNReader/lnreader-plugins) والمساهمين فيه، مع الحفاظ على حقوقهم ورخصة [MIT](LICENSE).
 
-Push your changes to the `master` branch. The [GitHub Action](./.github/workflows/publish-plugins.yml) automatically builds and publishes plugins to the `plugins` branch.
-
-Add your repository URL to the app:
-
-```
-https://raw.githubusercontent.com/<username>/<repo>/plugins/<tag>/.dist/plugins.min.json
-```
-
-**From Localhost:**
-
-```bash
-npm run serve:dev
-```
-
-Add `http://10.0.2.2/.dist/plugins.min.json` (Android emulator) to the app. Requires `.env` configuration (see `.env.template`).
-
-## Disclaimer
-
-The developers are not affiliated with any content providers. If you are a non-aggregator website owner, you may request plugin removal via [Discord](https://discord.gg/QdcWN4MD63) or by [creating an issue](https://github.com/LNReader/lnreader-plugins/issues/new). Removed sites are added to the [blacklist](BLACKLIST.json).
+المشروع مستقل عن LNReader وعن مواقع المحتوى. تبقى [قائمة المواقع المستبعدة](BLACKLIST.json) محفوظة وتُراجع قبل إضافة أي مصدر جديد.
