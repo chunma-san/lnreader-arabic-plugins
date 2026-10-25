@@ -285,16 +285,16 @@ export class MadaraPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    this.recordLoadDiagnostic('2.3.3: loading novel metadata');
+    this.recordLoadDiagnostic(`${this.version}: loading novel metadata`);
     try {
       const novel = await this.loadNovel(novelPath, this.id !== 'riwyat');
       this.recordLoadDiagnostic(
-        `2.3.3: metadata OK; title=${Boolean(novel.name)}; cover=${Boolean(novel.cover)}; pages=${novel.totalPages || 0}`,
+        `${this.version}: metadata OK; title=${Boolean(novel.name)}; cover=${Boolean(novel.cover)}; pages=${novel.totalPages || 0}`,
       );
       return novel;
     } catch (error) {
       this.recordLoadDiagnostic(
-        `2.3.3: metadata failed: ${String(error).slice(0, 500)}`,
+        `${this.version}: metadata failed: ${String(error).slice(0, 500)}`,
       );
       throw error;
     }
@@ -302,16 +302,18 @@ export class MadaraPlugin implements Plugin.PluginBase {
 
   async parsePage(novelPath: string, page: string): Promise<Plugin.SourcePage> {
     if (this.id !== 'riwyat' || page !== '1') return { chapters: [] };
-    this.recordLoadDiagnostic('2.3.3: metadata OK; loading chapter page');
+    this.recordLoadDiagnostic(
+      `${this.version}: metadata OK; loading chapter page`,
+    );
     try {
       const novel = await this.loadNovel(novelPath, true);
       this.recordLoadDiagnostic(
-        `2.3.3: metadata and chapter page OK; chapters=${novel.chapters.length}`,
+        `${this.version}: metadata and chapter page OK; chapters=${novel.chapters.length}`,
       );
       return { chapters: novel.chapters };
     } catch (error) {
       this.recordLoadDiagnostic(
-        `2.3.3: chapter page failed: ${String(error).slice(0, 500)}`,
+        `${this.version}: chapter page failed: ${String(error).slice(0, 500)}`,
       );
       throw error;
     }

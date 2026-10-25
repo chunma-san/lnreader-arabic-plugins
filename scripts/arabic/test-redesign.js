@@ -210,7 +210,14 @@ try {
       2,
     ) +
     '<li class="wp-manga-chapter"><a href="https://cenele.com/cont/test/chapter-1/">Chapter 1</a></li>';
-  globalThis.fetch = async url => {
+  globalThis.fetch = async (url, init) => {
+    assert.match(init.headers.Accept, /text\/html/);
+    assert.equal(init.headers['Accept-Language'], 'en-US,en;q=0.9');
+    assert(
+      !Object.keys(init.headers).some(
+        key => key.toLowerCase() === 'user-agent',
+      ),
+    );
     if (String(url).endsWith('/ajax/chapters/')) riwyatChapterRequests++;
     return response(
       url,
