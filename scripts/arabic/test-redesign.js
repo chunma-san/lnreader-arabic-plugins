@@ -249,6 +249,44 @@ try {
   assert(!body.text().includes('Hidden decoy'));
   assert(!body.text().includes('Advertisement'));
   assert.equal(body('img').length, 1);
+  assert.equal(parsed.rating, undefined);
+  globalThis.fetch = async url =>
+    response(
+      url,
+      '<div class="text-left"> </div><novel-chapter><h2>Heading</h2><section>Legitimate prose.</section><ul><li>A list item.</li></ul><img src="https://cenele.com/art.png"><div inert>Hidden decoy</div><aside data-nhv-reader-promo>Promotion</aside></novel-chapter>',
+    );
+  const alternative = load(await riwyat.parseChapter('cont/test/chapter-1/'));
+  assert.match(alternative.text(), /Legitimate prose/);
+  assert.equal(alternative('h2, li, img').length, 3);
+  assert(!alternative.text().includes('Hidden decoy'));
+  assert(!alternative.text().includes('Promotion'));
+  globalThis.fetch = async url =>
+    response(
+      url,
+      '<novel-chapter><img src="https://cenele.com/art.png"></novel-chapter>',
+    );
+  assert.equal(
+    load(await riwyat.parseChapter('cont/test/chapter-1/'))('img').length,
+    1,
+  );
+  globalThis.fetch = async url => response(url, '<main>No chapter body</main>');
+  await assert.rejects(
+    riwyat.parseChapter('cont/test/chapter-1/'),
+    /Chapter text not found/,
+  );
+  globalThis.fetch = async url => {
+    const result = new Response(
+      '<title>Just a moment...</title><div>cf-chl PRIVATE_MARKER</div>',
+      { status: 403 },
+    );
+    Object.defineProperty(result, 'url', { value: String(url) });
+    return result;
+  };
+  await assert.rejects(
+    riwyat.parseNovel('cont/test/'),
+    /HTTP 403; browser challenge; page title: Just a moment/,
+  );
+  assert(!riwyat.testDiagnostics().includes('PRIVATE_MARKER'));
   globalThis.fetch = async () => {
     throw new Error('Fixture network failure');
   };

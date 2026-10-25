@@ -140,10 +140,31 @@ export class MadaraPlugin implements Plugin.PluginBase {
 
   async getCheerio(url: string, search: boolean): Promise<CheerioAPI> {
     const r = await fetchApi(url, { headers: this.requestHeaders });
-    if (!r.ok && search != true)
+    if (!r.ok && search != true) {
+      if (this.id === 'riwyat') {
+        const rejected = await r.text();
+        const title = parseHTML(rejected)('title')
+          .text()
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 100);
+        const hint = /cf-chl|challenge-platform|just a moment/i.test(rejected)
+          ? 'browser challenge'
+          : /geo.?block|country.{0,30}(blocked|restricted)|not available in your (country|region)/i.test(
+                rejected,
+              )
+            ? 'region restriction message'
+            : /captcha/i.test(rejected)
+              ? 'captcha message'
+              : 'unclassified rejection';
+        throw new Error(
+          `HTTP ${r.status}; ${hint}; page title: ${title || '(none)'}. Open this novel in WebView.`,
+        );
+      }
       throw new Error(
         'Could not reach site (' + r.status + ') try to open in webview.',
       );
+    }
     const text = await r.text();
     const titleMatch = text.match(/<title[^>]*>([^<]+)<\/title>/i);
     const title = titleMatch ? titleMatch[1].trim() : '';
@@ -363,7 +384,10 @@ export class MadaraPlugin implements Plugin.PluginBase {
     novel.cover = this.extractCover(loadedCheerio('.summary_image > a > img'));
 
     if (this.id === 'riwyat') {
-      novel.name ||= loadedCheerio('h1.nhv-novel-title').text().trim();
+      novel.name ||= loadedCheerio('h1.nhv-novel-title, h1.entry-title')
+        .first()
+        .text()
+        .trim();
       if (novel.cover === defaultCover) {
         novel.cover = this.extractCover(loadedCheerio('.nhv-novel-cover img'));
       }
@@ -456,10 +480,19 @@ export class MadaraPlugin implements Plugin.PluginBase {
           : NovelStatus.Completed;
       if (!novel.author)
         novel.author = loadedCheerio('.manga-author a').text().trim();
-      if (!novel.rating)
-        novel.rating = parseFloat(
+      if (!novel.rating) {
+        const rating = parseFloat(
           loadedCheerio('.post-rating span').text().trim(),
         );
+        if (this.id !== 'riwyat' || Number.isFinite(rating))
+          novel.rating = rating;
+      }
+      if (this.id === 'riwyat' && !novel.rating) {
+        const rating = parseFloat(
+          loadedCheerio('.nhv-simple-rating__avg').text().trim(),
+        );
+        if (Number.isFinite(rating)) novel.rating = rating;
+      }
     }
 
     if (!novel.author)
@@ -497,7 +530,14 @@ export class MadaraPlugin implements Plugin.PluginBase {
         .trim();
     const chapters: Plugin.ChapterItem[] = [];
     if (this.id === 'riwyat' && !novel.summary) {
-      novel.summary = loadedCheerio('.nhv-novel-synopsis').text().trim();
+      const synopsis = loadedCheerio('.nhv-novel-synopsis');
+      novel.summary =
+        synopsis
+          .find('p')
+          .map((_, element) => loadedCheerio(element).text().trim())
+          .get()
+          .filter(Boolean)
+          .join('\n\n') || synopsis.text().trim();
     }
     if (this.id === 'riwyat' && !loadChapters) {
       if (!novel.name) {
@@ -642,10 +682,26 @@ export class MadaraPlugin implements Plugin.PluginBase {
       `${baseUrl}/${cleanPath}`,
       false,
     );
-    let chapterText =
-      this.id === 'riwyat'
-        ? loadedCheerio('.reading-content story-layer').first()
-        : loadedCheerio('.text-left');
+    let chapterText = loadedCheerio('.text-left');
+    if (this.id === 'riwyat') {
+      chapterText = loadedCheerio('.__no-chapter-content__');
+      for (const selector of [
+        '.reading-content story-layer',
+        'novel-chapter',
+        '.text-left',
+        '.text-right',
+        '.text-content',
+        '.text-chapter-content',
+        '.reading-content',
+        '.entry-content',
+      ]) {
+        const candidate = loadedCheerio(selector).first();
+        if (candidate.text().trim() || candidate.find('img').length) {
+          chapterText = candidate;
+          break;
+        }
+      }
+    }
     if (!chapterText.length) chapterText = loadedCheerio('.text-left');
     if (!chapterText.length) chapterText = loadedCheerio('.text-right');
     if (!chapterText.length) chapterText = loadedCheerio('.entry-content');
@@ -656,7 +712,7 @@ export class MadaraPlugin implements Plugin.PluginBase {
     if (this.id === 'riwyat') {
       chapterText
         .find(
-          'script, style, noscript, input, button, .nhv-reader-promo, .nhv-reading-chapter-head, [role="presentation"], [hidden]',
+          'script, style, noscript, input, button, .nhv-reader-promo, .nhv-reader-store-promo, .nhv-reading-chapter-head, [role="presentation"], [hidden], [inert], [data-nosnippet], [data-nhv-reader-promo]',
         )
         .remove();
       chapterText.find('[style]').each((_, element) => {
@@ -679,6 +735,15 @@ export class MadaraPlugin implements Plugin.PluginBase {
       }
     }
 
+    if (
+      this.id === 'riwyat' &&
+      !chapterText.text().trim() &&
+      !chapterText.find('img').length
+    ) {
+      throw new Error(
+        'Chapter text not found on the page, try to open in webview.',
+      );
+    }
     return this.translateDragontea(chapterText).html() || '';
   }
 
