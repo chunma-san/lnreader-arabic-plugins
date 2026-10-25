@@ -1,5 +1,5 @@
 {
-  "source": "7179e8fbf8aeccce16eb8243a996d48ef64ec414",
+  "source": "6dfeef083bf6c16fc0076ab5e1d953a0d5fe6099",
   "repository": "chunma-san/lnreader-arabic-plugins",
   "branch": "plugins/v3.0.0",
   "plugins": [
@@ -69,7 +69,7 @@
     },
     {
       "id": "riwyat",
-      "version": "2.3.3"
+      "version": "2.3.4"
     },
     {
       "id": "seanovel",
