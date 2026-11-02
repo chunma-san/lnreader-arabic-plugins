@@ -202,6 +202,65 @@ try {
     'PASS: lightweight encoded covers, metadata without chapter requests, 75 unique ordered chapters, on-demand pages and retired duplicate source',
   );
 
+  let requestedPage;
+  globalThis.fetch = async url => {
+    const parsed = new URL(url);
+    if (parsed.pathname === '/series/current/') {
+      return response(
+        url,
+        '<h1 class="kol-series-editorial__title">Current layout</h1><div data-kol-chapter-index data-kol-volume-url="/wp-admin/admin-ajax.php" data-kol-volume-nonce="fixture" data-kol-series-id="3"><details data-kol-chapter-volume="__kol_all__" data-kol-volume-pages="4"><span class="kol-series-editorial__volume-count">87 chapters</span></details><details data-kol-chapter-volume="arc-1"><span class="kol-series-editorial__volume-count">20 chapters</span></details></div>',
+      );
+    }
+    requestedPage = Number(parsed.searchParams.get('page'));
+    assert.equal(parsed.searchParams.get('volume'), '__kol_all__');
+    const last = 87 - (requestedPage - 1) * 25;
+    const html = Array.from({ length: Math.min(25, last) }, (_, i) =>
+      row(last - i),
+    ).join('');
+    return response(
+      url,
+      JSON.stringify({ success: true, data: { html, pages: 4 } }),
+    );
+  };
+  const current = await plugin('KolNovel[starless].ts');
+  const currentNovel = await current.parseNovel('/series/current/');
+  assert.equal(currentNovel.totalPages, 4);
+  const currentChapters = [];
+  for (let page = 1; page <= currentNovel.totalPages; page++) {
+    currentChapters.push(
+      ...(await current.parsePage('/series/current/', String(page))).chapters,
+    );
+    assert.equal(requestedPage, 5 - page);
+  }
+  assert.deepEqual(
+    currentChapters.map(chapter => chapter.chapterNumber),
+    Array.from({ length: 87 }, (_, i) => i + 1),
+  );
+  console.log(
+    'PASS: current aggregate chapter index uses declared pagination without duplicate arc chapters',
+  );
+
+  globalThis.fetch = async (url, init) => {
+    assert.equal(String(url), 'https://golden.rest/api/quick_search');
+    assert.equal(init.method, 'POST');
+    assert.equal(init.body.get('query'), 'Fixture');
+    return response(
+      url,
+      JSON.stringify([{ data: [{ id: 1, title: 'Fixture', is_novel: true }] }]),
+    );
+  };
+  const dilar = await plugin('dilartube.ts');
+  assert.equal((await dilar.searchNovels('Fixture', 1))[0].path, 'mangas/1');
+  globalThis.fetch = async () =>
+    new Response('{"error":"read-only"}', { status: 503 });
+  await assert.rejects(
+    dilar.searchNovels('Fixture', 1),
+    error => error.status === 503 && /Search unavailable/.test(error.message),
+  );
+  console.log(
+    'PASS: dilar search uses the current host and preserves maintenance HTTP status',
+  );
+
   const details =
     '<h1 class="nhv-novel-title">Fixture novel</h1><div class="nhv-novel-cover"><img src="https://cenele.com/cover.jpg"></div><div class="nhv-novel-status"><strong>مستمرة</strong></div><div class="nhv-novel-synopsis">Fixture summary</div><li class="wp-manga-chapter"><a href="https://cenele.com/cont/test/chapter-1/">Chapter 1</a></li>';
   let riwyatChapterRequests = 0;

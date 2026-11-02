@@ -182,7 +182,11 @@ export class StarlessPlugin implements Plugin.PagePlugin {
       throw new Error('Could not find the chapter index');
     }
     index.url = this.resolveUrl(index.url);
-    root.find('[data-kol-chapter-volume]').each((position, element) => {
+    const volumes = root.find('[data-kol-chapter-volume]');
+    const allChapters = volumes.filter(
+      '[data-kol-chapter-volume="__kol_all__"]',
+    );
+    (allChapters.length ? allChapters : volumes).each((position, element) => {
       const volume = $(element);
       const count = volume
         .find('.kol-series-editorial__volume-count')
@@ -197,7 +201,9 @@ export class StarlessPlugin implements Plugin.PagePlugin {
         .match(/\d+/);
       index.volumes.push({
         id: volume.attr('data-kol-chapter-volume') || '',
-        pages: Math.max(1, Math.ceil(Number(count) / CHAPTERS_PER_PAGE)),
+        pages: allChapters.length
+          ? Math.max(1, Number(volume.attr('data-kol-volume-pages')) || 1)
+          : Math.max(1, Math.ceil(Number(count) / CHAPTERS_PER_PAGE)),
         order: titleNumber ? Number(titleNumber[0]) : position,
       });
     });

@@ -7,10 +7,10 @@ This inventory includes the maintained Arabic sources and their current versions
 | [ArNovel](https://ar-no.com/) | `arnovel` | 2.3.0 |
 | [Azora](https://azoramoon.com/) | `azora` | 2.3.0 |
 | [Azora Manga](https://azorafly.com/) | `azorafly` | 1.0.0 |
-| [dilar tube](https://golden.rest/) | `dilartube` | 1.0.2 |
+| [dilar tube](https://golden.rest/) | `dilartube` | 1.0.3 |
 | [Galaxy Novels](https://galaxynovels.com/) | `galaxynovels` | 1.1.1 |
 | [HizoManga](https://hizomanga.net/) | `hizomanga` | 2.3.0 |
-| [Kol Novel](https://kolnovel.com/) | `kolnovel` | 1.2.1 |
+| [Kol Novel](https://kolnovel.com/) | `kolnovel` | 1.2.2 |
 | [Markaz Riwayat](https://markazriwayat.com/) | `markazriwayat` | 1.0.0 |
 | [Mamlakat Al Riwayat](https://mknov.com) | `mknov` | 1.0.0 |
 | [Maktabat Al Khayal](https://mtlarabic.com) | `mtlarabic` | 1.0.0 |
@@ -25,6 +25,13 @@ This inventory includes the maintained Arabic sources and their current versions
 | [Sunovels](https://sunovels.com/) | `sunovels` | 1.0.1 |
 
 ## Reproduced baseline issues
+
+### Live investigation: 2026-11-02
+
+- Kol Novel 1.2.2 uses the current aggregate chapter index and its declared page count. This avoids counting arc chapters twice and supports the site's new page size. Listings, search, details and a sample chapter passed a live check; offline tests also verify all 87 chapters across four pages in the current layout.
+- dilar tube 1.0.3 sends search to the current `golden.rest` host. Listings, novel details and a sample chapter passed. Search currently returns HTTP 503 because the site reports read-only maintenance; the plugin preserves that status rather than trying to parse an HTML response from the old domain.
+- Azora's old host redirects to Azora Manga, already included as `azorafly`. Its old novel listing URL returns 404. Markaz Riwayat redirects to Galaxy Novels, already included as `galaxynovels`, and its old listing URL also returns 404. These legacy sources retain their IDs and paths for existing libraries; they are not silently redirected to unrelated parser layouts.
+- Novel4Up requested a CAPTCHA and Novels Paradise returned HTTP 403. These checks do not establish working access. The daily report keeps unresolved failures visible; publication is not evidence that every website works.
 
 On 2026-10-24, Kol Novel returned an empty novel list after a website redesign, and Free Kol Novel rejected the redirect to the main site. Riwyat passed listings and search, then failed to extract the novel name on the details page. These failures were recorded before the source fixes below.
 
