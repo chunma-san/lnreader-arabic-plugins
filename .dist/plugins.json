@@ -31,7 +31,7 @@
     "name": "dilar tube",
     "site": "https://golden.rest/",
     "lang": "‎العربية",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/dilartube.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/dilartube/icon.png"
   },
@@ -58,7 +58,7 @@
     "name": "Kol Novel",
     "site": "https://kolnovel.com/",
     "lang": "‎العربية",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/KolNovel%5Bstarless%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/lightnovelwp/kolnovel/icon.png"
   },

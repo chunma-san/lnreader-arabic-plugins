@@ -1,5 +1,5 @@
 {
-  "source": "12b60511cbf8d546778129ea106f13f5016ebd27",
+  "source": "5f84b8119b2fd0b820ba69635adf8011f2fd0561",
   "repository": "chunma-san/lnreader-arabic-plugins",
   "branch": "plugins/v3.0.0",
   "plugins": [
@@ -17,7 +17,7 @@
     },
     {
       "id": "dilartube",
-      "version": "1.0.2"
+      "version": "1.0.3"
     },
     {
       "id": "galaxynovels",
@@ -29,7 +29,7 @@
     },
     {
       "id": "kolnovel",
-      "version": "1.2.1"
+      "version": "1.2.2"
     },
     {
       "id": "markazriwayat",
