@@ -438,6 +438,30 @@ try {
     );
   }
   const encodedText = JSON.stringify(payload);
+  const mixedRecords = `1:${encodedText}\n2:${JSON.stringify({ initialParagraphs: [] })}\n`;
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(mixedRecords)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
+  );
+  const blankFirst = `1:${JSON.stringify(JSON.stringify({ initialParagraphs: [' '] }))}\n2:${payload}\n`;
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(blankFirst)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
+  );
   const textRecord = `1:T${Buffer.byteLength(encodedText).toString(16)},${encodedText}`;
   globalThis.fetch = async url =>
     response(

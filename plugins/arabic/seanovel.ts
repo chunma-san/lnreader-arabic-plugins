@@ -46,9 +46,7 @@ function extractInitialParagraphs(
   payload: string,
   decodeRecord = true,
 ): string[] {
-  const keyIndex = payload.indexOf('"initialParagraphs"');
-  if (keyIndex < 0) {
-    if (!decodeRecord) return [];
+  if (decodeRecord) {
     const inspectRecord = (value: unknown): string[] => {
       const pending = [value];
       while (pending.length) {
@@ -62,6 +60,15 @@ function extractInitialParagraphs(
             continue;
           }
         } else if (current && typeof current === 'object') {
+          if (
+            'initialParagraphs' in current &&
+            Array.isArray(current.initialParagraphs)
+          ) {
+            const paragraphs = current.initialParagraphs.filter(
+              (value): value is string => typeof value === 'string',
+            );
+            if (paragraphs.some(value => value.trim())) return paragraphs;
+          }
           pending.push(...Object.values(current));
         }
       }
@@ -106,8 +113,9 @@ function extractInitialParagraphs(
         continue;
       }
     }
-    return [];
   }
+  const keyIndex = payload.indexOf('"initialParagraphs"');
+  if (keyIndex < 0) return [];
   const start = payload.indexOf('[', keyIndex);
   if (start < 0) return [];
 
@@ -132,7 +140,12 @@ function extractInitialParagraphs(
       if (depth === 0) {
         try {
           const parsed: unknown = JSON.parse(payload.substring(start, i + 1));
-          return Array.isArray(parsed) ? parsed : [];
+          return Array.isArray(parsed)
+            ? parsed.filter(
+                (value): value is string =>
+                  typeof value === 'string' && value.trim().length > 0,
+              )
+            : [];
         } catch {
           return [];
         }
@@ -146,7 +159,7 @@ function extractInitialParagraphs(
 class Seanovel implements Plugin.PluginBase {
   id = 'seanovel';
   name = 'Seanovel';
-  version = '1.2.0';
+  version = '1.2.1';
   icon = 'src/ar/seanovel/icon.png';
   site = 'https://seanovel.org/';
 

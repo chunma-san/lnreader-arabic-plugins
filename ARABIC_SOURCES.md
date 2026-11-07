@@ -21,7 +21,7 @@ This inventory includes the maintained Arabic sources and their current versions
 | [Rewayat Club](https://rewayat.club/) | `rewayatclub` | 1.0.3 |
 | [Rewayat Fans](https://rewayatfans.com/) | `rewayatfans` | 4.2.0 |
 | [Riwyat](https://cenele.com/) | `riwyat` | 2.3.5 |
-| [Seanovel](https://seanovel.org/) | `seanovel` | 1.2.0 |
+| [Seanovel](https://seanovel.org/) | `seanovel` | 1.2.1 |
 | [Sunovels](https://sunovels.com/) | `sunovels` | 1.0.1 |
 
 ## Reproduced baseline issues
