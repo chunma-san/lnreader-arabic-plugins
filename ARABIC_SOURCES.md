@@ -20,11 +20,18 @@ This inventory includes the maintained Arabic sources and their current versions
 | [Rewayah Fans](https://rewayahfans.net/) | `rewayahfans` | 1.0.0 |
 | [Rewayat Club](https://rewayat.club/) | `rewayatclub` | 1.0.3 |
 | [Rewayat Fans](https://rewayatfans.com/) | `rewayatfans` | 4.2.0 |
-| [Riwyat](https://cenele.com/) | `riwyat` | 2.3.1 |
-| [Seanovel](https://seanovel.org/) | `seanovel` | 1.0.0 |
+| [Riwyat](https://cenele.com/) | `riwyat` | 2.3.5 |
+| [Seanovel](https://seanovel.org/) | `seanovel` | 1.2.0 |
 | [Sunovels](https://sunovels.com/) | `sunovels` | 1.0.1 |
 
 ## Reproduced baseline issues
+
+### Reviewed updates: 2026-11-07
+
+- Reviewed upstream `a2bd6dd` for Madara volume ordering, but deferred it after review found regressions with paginated volumes and hidden chapters. This fork's Riwyat ordering, deduplication, diagnostics and on-demand loading remain intact.
+- Applied upstream `9a2948b` for Seanovel's string-aware RSC paragraph parser. Offline checks cover brackets, escaped quotes and backslashes. Listings, search, details and a sample chapter passed live checks for Seanovel and Riwyat.
+- These are selected upstream changes, not a full upstream merge; `upstream.json` still records the last complete review. Original upstream contributor credit is retained in the commit message.
+- Azora and Markaz Riwayat's legacy endpoints still fail; the current `azorafly` and `galaxynovels` plugins work in sampled checks. Novel4Up's domain now serves an unrelated portfolio, and Novels Paradise could not be resolved. No replacement domain is inferred and existing library IDs are retained. Their failing or inconclusive health results remain visible.
 
 ### Live investigation: 2026-11-02
 

@@ -40,6 +40,7 @@ async function plugin(file, production = false) {
         },
       },
       '@libs/defaultCover': { defaultCover: 'default-cover' },
+      '@libs/filterInputs': { FilterTypes: { Picker: 'Picker' } },
       '@libs/novelStatus': {
         NovelStatus: {
           Unknown: 'Unknown',
@@ -367,6 +368,101 @@ try {
   );
   console.log(
     'PASS: production Riwyat runtime, metadata without chapter requests, chapter pages, invalid AJAX fallback and readable content',
+  );
+  const paragraphs = [
+    'Text with ] and [ brackets',
+    'Quoted "words" and a \\ slash',
+  ];
+  const payload = JSON.stringify({ initialParagraphs: paragraphs });
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(payload)}])</script>`,
+    );
+  const seanovel = await plugin('seanovel.ts', true);
+  const seanovelBody = load(await seanovel.parseChapter('/novels/fixture/1'));
+  assert.deepEqual(
+    seanovelBody('p')
+      .map((_, el) => seanovelBody(el).text())
+      .get(),
+    paragraphs,
+  );
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(`2:${JSON.stringify(payload)}\n`)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
+  );
+  let nested = { data: payload };
+  for (let level = 0; level < 20; level++) nested = { child: nested };
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(`4:${JSON.stringify(nested)}\n`)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
+  );
+  const adjacent = `1:T400,${'a'.repeat(1024)}2:${JSON.stringify(payload)}\n`;
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(adjacent)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
+  );
+  for (const text of ['"', 'عربي " 🐈']) {
+    const flight = `1:T${Buffer.byteLength(text).toString(16)},${text}2:${JSON.stringify(payload)}\n`;
+    globalThis.fetch = async url =>
+      response(
+        url,
+        `<script>self.__next_f.push([1,${JSON.stringify(flight)}])</script>`,
+      );
+    assert.deepEqual(
+      load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+        .map((_, el) => load(el).text())
+        .get(),
+      paragraphs,
+    );
+  }
+  const encodedText = JSON.stringify(payload);
+  const textRecord = `1:T${Buffer.byteLength(encodedText).toString(16)},${encodedText}`;
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(textRecord)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
+  );
+  console.log(
+    'PASS: Seanovel retains brackets, escaped quotes and backslashes in RSC paragraphs',
+  );
+  globalThis.fetch = async url =>
+    response(
+      url,
+      `<script>self.__next_f.push([1,${JSON.stringify(`3:${JSON.stringify(['$', 'div', { data: payload }])}\n`)}])</script>`,
+    );
+  assert.deepEqual(
+    load(await seanovel.parseChapter('/novels/fixture/1'))('p')
+      .map((_, el) => load(el).text())
+      .get(),
+    paragraphs,
   );
 } finally {
   globalThis.fetch = originalFetch;

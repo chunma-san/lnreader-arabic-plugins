@@ -32,10 +32,121 @@ type SeanovelNovelListItem = {
   description: string;
 };
 
+/**
+ * Pull the `initialParagraphs` array out of a Next.js RSC payload.
+ *
+ * The array is sliced out by scanning for its closing bracket, but a plain
+ * depth counter breaks on the first `[` or `]` that appears *inside* a
+ * paragraph — translated chapters quote things like "انظر [ملاحظة]" often
+ * enough that ~4% of chapters came back as a truncated, unparseable slice and
+ * the reader showed "Content not available". So the scan has to know when it
+ * is inside a JSON string literal.
+ */
+function extractInitialParagraphs(
+  payload: string,
+  decodeRecord = true,
+): string[] {
+  const keyIndex = payload.indexOf('"initialParagraphs"');
+  if (keyIndex < 0) {
+    if (!decodeRecord) return [];
+    const inspectRecord = (value: unknown): string[] => {
+      const pending = [value];
+      while (pending.length) {
+        const current = pending.pop();
+        if (typeof current === 'string') {
+          const paragraphs = extractInitialParagraphs(current, false);
+          if (paragraphs.length) return paragraphs;
+          try {
+            pending.push(JSON.parse(current));
+          } catch {
+            continue;
+          }
+        } else if (current && typeof current === 'object') {
+          pending.push(...Object.values(current));
+        }
+      }
+      return [];
+    };
+    let offset = 0;
+    while (offset < payload.length) {
+      const header = /^[\da-f]+:/i.exec(payload.slice(offset));
+      if (header) offset += header[0].length;
+      const textHeader = /^T([\da-f]+),/i.exec(payload.slice(offset));
+      if (header && textHeader) {
+        offset += textHeader[0].length;
+        const textStart = offset;
+        const byteLength = parseInt(textHeader[1], 16);
+        let bytes = 0;
+        while (offset < payload.length && bytes < byteLength) {
+          const code = payload.charCodeAt(offset++);
+          if (code < 0x80) bytes++;
+          else if (code < 0x800) bytes += 2;
+          else if (
+            code >= 0xd800 &&
+            code <= 0xdbff &&
+            payload.charCodeAt(offset) >= 0xdc00 &&
+            payload.charCodeAt(offset) <= 0xdfff
+          ) {
+            bytes += 4;
+            offset++;
+          } else bytes += 3;
+        }
+        const paragraphs = inspectRecord(payload.slice(textStart, offset));
+        if (paragraphs.length) return paragraphs;
+        continue;
+      }
+      const end = payload.indexOf('\n', offset);
+      const record = payload.slice(offset, end < 0 ? payload.length : end);
+      offset = end < 0 ? payload.length : end + 1;
+      try {
+        const decoded: unknown = JSON.parse(record);
+        const paragraphs = inspectRecord(decoded);
+        if (paragraphs.length) return paragraphs;
+      } catch {
+        continue;
+      }
+    }
+    return [];
+  }
+  const start = payload.indexOf('[', keyIndex);
+  if (start < 0) return [];
+
+  let depth = 0;
+  let inString = false;
+  for (let i = start; i < payload.length; i++) {
+    const char = payload[i];
+    if (inString) {
+      if (char === '\\') {
+        i++; // the next character is escaped, whatever it is
+      } else if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+    if (char === '"') {
+      inString = true;
+    } else if (char === '[' || char === '{') {
+      depth++;
+    } else if (char === ']' || char === '}') {
+      depth--;
+      if (depth === 0) {
+        try {
+          const parsed: unknown = JSON.parse(payload.substring(start, i + 1));
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+    }
+  }
+
+  return [];
+}
+
 class Seanovel implements Plugin.PluginBase {
   id = 'seanovel';
   name = 'Seanovel';
-  version = '1.0.0';
+  version = '1.2.0';
   icon = 'src/ar/seanovel/icon.png';
   site = 'https://seanovel.org/';
 
@@ -150,39 +261,12 @@ class Seanovel implements Plugin.PluginBase {
     }
 
     if (allChunks.length > 0) {
-      const fullPayload = allChunks.join('');
-      const initIdx = fullPayload.indexOf('initialParagraphs');
-      if (initIdx > 0) {
-        const arrStart = fullPayload.indexOf('[', initIdx);
-        if (arrStart > 0) {
-          let depth = 0;
-          let arrEnd = -1;
-          for (let i = arrStart; i < fullPayload.length; i++) {
-            if (fullPayload[i] === '[') depth++;
-            if (fullPayload[i] === ']') {
-              depth--;
-              if (depth === 0) {
-                arrEnd = i + 1;
-                break;
-              }
-            }
-          }
-          if (arrEnd > 0) {
-            const raw = fullPayload.substring(arrStart, arrEnd);
-            const unescaped = raw.replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-            try {
-              const paragraphs: string[] = JSON.parse(unescaped);
-              if (paragraphs.length > 0) {
-                return paragraphs
-                  .filter(p => typeof p === 'string' && p.trim())
-                  .map(p => `<p>${p.trim()}</p>`)
-                  .join('\n');
-              }
-            } catch {
-              // fallback below
-            }
-          }
-        }
+      const paragraphs = extractInitialParagraphs(allChunks.join(''));
+      if (paragraphs.length > 0) {
+        return paragraphs
+          .filter(p => typeof p === 'string' && p.trim())
+          .map(p => `<p>${p.trim()}</p>`)
+          .join('\n');
       }
     }
 
