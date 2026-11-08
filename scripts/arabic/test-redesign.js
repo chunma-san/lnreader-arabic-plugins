@@ -93,6 +93,103 @@ const pages = [
 let listingPage;
 let chapterRequests = 0;
 try {
+  const markaz = await plugin('MarkazRiwayat[worreader].ts', true);
+  const markazRequests = [];
+  assert.equal(markaz.id, 'markazriwayat');
+  assert.equal(markaz.version, '2.0.0');
+  globalThis.fetch = async url => {
+    const parsed = new URL(url);
+    markazRequests.push(parsed.pathname);
+    assert.equal(parsed.origin, 'https://galaxynovels.com');
+    if (parsed.pathname === '/novels/') {
+      return response(
+        url,
+        '<article class="wor-novel-card"><a class="wor-novel-card__cover" href="/novel/example/"></a><h3><a>Example</a></h3></article>',
+      );
+    }
+    assert.equal(parsed.pathname, '/novel/example/chapter-42/');
+    return response(
+      url,
+      '<article class="wor-chapter-content"><p>Saved chapter</p></article>',
+    );
+  };
+  const markazFilters = Object.fromEntries(
+    Object.entries(markaz.filters).map(([key, value]) => [
+      key,
+      { value: value.value },
+    ]),
+  );
+  assert.equal(
+    (
+      await markaz.popularNovels(1, {
+        filters: markazFilters,
+        showLatestNovels: false,
+      })
+    )[0].path,
+    'novel/example',
+  );
+  for (const path of [
+    'novel/example/chapter-42/',
+    '/novel/example/chapter-42/',
+  ]) {
+    markazRequests.length = 0;
+    assert.match(await markaz.parseChapter(path), /Saved chapter/);
+    assert.deepEqual(markazRequests, ['/novel/example/chapter-42/']);
+  }
+  console.log(
+    'PASS: Markaz keeps its plugin ID and accepts saved relative chapter paths',
+  );
+  globalThis.fetch = async url => {
+    const pathname = new URL(url).pathname;
+    if (pathname.endsWith('/index.json'))
+      return response(
+        url,
+        JSON.stringify({
+          total: 1,
+          chapters: [{ id: 42, label: 'Chapter 42', position: 1 }],
+        }),
+      );
+    return response(
+      url,
+      '<h1>Example</h1><div data-wor-chapters-container data-index-url="/index.json"></div>',
+    );
+  };
+  const savedNovel = await markaz.parseNovel('novel/example');
+  assert.equal(
+    savedNovel.chapters[0].path,
+    'novel/example/chapter-42/?wor_post_id=42',
+  );
+  assert.equal(savedNovel.cover, 'default-cover');
+  globalThis.fetch = async url => {
+    if (new URL(url).pathname.endsWith('/index.json'))
+      return new Response('', { status: 503 });
+    return response(
+      url,
+      '<h1>Example</h1><div data-wor-chapters-container data-index-url="/index.json"></div><article class="wor-novel-chapter-item"><h3><a href="/partial/">Partial</a></h3></article>',
+    );
+  };
+  await assert.rejects(markaz.parseNovel('novel/example'), /503/);
+  globalThis.fetch = async url =>
+    response(
+      url,
+      JSON.stringify(
+        new URL(url).pathname.endsWith('/manifest.json')
+          ? { index: 'https://galaxynovels.com/index.json' }
+          : {
+              items: [
+                {
+                  t: 'Example',
+                  s: 'example',
+                  u: 'https://galaxynovels.com/novel/example/',
+                },
+              ],
+            },
+      ),
+    );
+  assert.equal(
+    (await markaz.searchNovels('Example', 1))[0].cover,
+    'default-cover',
+  );
   globalThis.fetch = async url => {
     const parsed = new URL(url);
     if (parsed.pathname === '/series/') {

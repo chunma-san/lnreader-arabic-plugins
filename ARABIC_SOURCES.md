@@ -8,10 +8,10 @@ This inventory includes the maintained Arabic sources and their current versions
 | [Azora](https://azoramoon.com/) | `azora` | 2.3.0 |
 | [Azora Manga](https://azorafly.com/) | `azorafly` | 1.0.0 |
 | [dilar tube](https://golden.rest/) | `dilartube` | 1.0.3 |
-| [Galaxy Novels](https://galaxynovels.com/) | `galaxynovels` | 1.1.1 |
+| [Galaxy Novels](https://galaxynovels.com/) | `galaxynovels` | 1.2.0 |
 | [HizoManga](https://hizomanga.net/) | `hizomanga` | 2.3.0 |
 | [Kol Novel](https://kolnovel.com/) | `kolnovel` | 1.2.2 |
-| [Markaz Riwayat](https://markazriwayat.com/) | `markazriwayat` | 1.0.0 |
+| [Markaz Riwayat](https://galaxynovels.com/) | `markazriwayat` | 2.0.0 |
 | [Mamlakat Al Riwayat](https://mknov.com) | `mknov` | 1.0.0 |
 | [Maktabat Al Khayal](https://mtlarabic.com) | `mtlarabic` | 1.0.0 |
 | [Novel4Up](https://novel4up.com/) | `novel4up` | 2.3.0 |
@@ -56,3 +56,9 @@ The inventory records included sources and versions. A successful build does not
 Kol Novel 1.2.1 returns novel details without fetching chapter pages first. Chapter pages load on demand, and listing covers use small images from the site's `srcset` with properly encoded URLs. Detail covers use a larger thumbnail instead of the full image.
 
 Free Kol Novel has been removed from the active catalog because it redirects to Kol Novel. Existing Kol Novel links and IDs are preserved. If the retired plugin is already installed, it may remain in the app's installed list; move any library entries you still use to Kol Novel before removing it.
+
+## Markaz migration: 2026-11-08
+
+Maintained by [chunma-san](https://github.com/chunma-san). Markaz now redirects to Galaxy Novels. One shared Wor Reader generator supplies Galaxy 1.2.0 and Markaz 2.0.0, adapting the existing Galaxy parser for the legacy Markaz plugin ID and icon, including listings, search, chapter indexes and content. Relative library paths with or without a leading slash are accepted; individual removed titles cannot be restored by the plugin. Original LNReader source attribution and license remain unchanged.
+
+Saved numeric Markaz chapter URLs are requested as URLs, not interpreted as Galaxy post IDs. Whether a particular old numeric URL redirects correctly depends on the site; no complete mapping of old chapters has been verified.
