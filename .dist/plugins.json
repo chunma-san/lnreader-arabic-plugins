@@ -40,8 +40,8 @@
     "name": "Galaxy Novels",
     "site": "https://galaxynovels.com/",
     "lang": "‎العربية",
-    "version": "1.1.1",
-    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/galaxynovels.js",
+    "version": "1.2.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/GalaxyNovels%5Bworreader%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/galaxynovels/icon.png"
   },
   {
@@ -65,10 +65,10 @@
   {
     "id": "markazriwayat",
     "name": "مركز الروايات",
-    "site": "https://markazriwayat.com/",
+    "site": "https://galaxynovels.com/",
     "lang": "‎العربية",
-    "version": "1.0.0",
-    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/Markazriwayat.js",
+    "version": "2.0.0",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/MarkazRiwayat%5Bworreader%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/markazriwayat/icon.png"
   },
   {
