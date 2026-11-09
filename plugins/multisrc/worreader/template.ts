@@ -264,7 +264,9 @@ class WorReaderPlugin implements Plugin.PluginBase {
     const parsedPath = new URL(chapterPath, this.site);
     if (parsedPath.origin !== new URL(this.site).origin)
       throw new Error('Chapter URL is outside the source origin');
-    const markedId = parsedPath.searchParams.get('wor_post_id');
+    const candidateId = parsedPath.searchParams.get('wor_post_id');
+    const markedId =
+      candidateId && /^\d+$/.test(candidateId) ? candidateId : null;
     const legacyId = this.source.options.legacyPostIds
       ? parsedPath.pathname.match(/chapter-(\d+)\/?$/)?.[1]
       : undefined;
