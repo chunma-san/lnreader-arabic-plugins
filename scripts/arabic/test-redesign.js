@@ -96,7 +96,12 @@ try {
   const markaz = await plugin('MarkazRiwayat[worreader].ts', true);
   const markazRequests = [];
   assert.equal(markaz.id, 'markazriwayat');
-  assert.equal(markaz.version, '2.0.0');
+  assert.equal(
+    markaz.version,
+    JSON.parse(
+      fs.readFileSync('plugins/multisrc/worreader/sources.json', 'utf8'),
+    ).find(source => source.id === 'markazriwayat').version,
+  );
   globalThis.fetch = async url => {
     const parsed = new URL(url);
     markazRequests.push(parsed.pathname);
@@ -113,6 +118,10 @@ try {
       '<article class="wor-chapter-content"><p>Saved chapter</p></article>',
     );
   };
+  await assert.rejects(
+    markaz.parseChapter('//other.example/chapter/1/'),
+    /outside the source origin/,
+  );
   const markazFilters = Object.fromEntries(
     Object.entries(markaz.filters).map(([key, value]) => [
       key,

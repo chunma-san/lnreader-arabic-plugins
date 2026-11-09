@@ -259,6 +259,8 @@ class WorReaderPlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     // Only legacy `chapter-<id>/` paths carry the post id; real URLs are `chapter-<number>/<slug>/`
     const parsedPath = new URL(chapterPath, this.site);
+    if (parsedPath.origin !== new URL(this.site).origin)
+      throw new Error('Chapter URL is outside the source origin');
     const markedId = parsedPath.searchParams.get('wor_post_id');
     const legacyId = this.source.options.legacyPostIds
       ? parsedPath.pathname.match(/chapter-(\d+)\/?$/)?.[1]
