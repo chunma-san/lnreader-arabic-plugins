@@ -153,7 +153,10 @@ class WorReaderPlugin implements Plugin.PluginBase {
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const originalPath = novelPath;
     novelPath = this.toPath(novelPath);
-    const url = new URL(novelPath, this.site).href;
+    const resolved = new URL(novelPath, this.site);
+    if (resolved.origin !== new URL(this.site).origin)
+      throw new Error('Novel URL is outside the source origin');
+    const url = resolved.href;
     const html = await this.fetchHtml(url);
     const $ = loadCheerio(html);
 
@@ -274,12 +277,13 @@ class WorReaderPlugin implements Plugin.PluginBase {
         if (response.data?.content_html) {
           return response.data.content_html;
         }
-      } catch {
-        // fallback to HTML
+        if (markedId) throw new Error('Chapter API returned no content');
+      } catch (error) {
+        if (markedId) throw error;
       }
     }
 
-    const url = new URL(chapterPath, this.site).href;
+    const url = parsedPath.href;
     const html = await this.fetchHtml(url);
     const $ = loadCheerio(html);
     $('[data-wor-decoy], [hidden]').remove();
