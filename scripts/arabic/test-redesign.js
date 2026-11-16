@@ -84,6 +84,42 @@ const response = (url, body) => {
   Object.defineProperty(result, 'url', { value: String(url) });
   return result;
 };
+
+try {
+  globalThis.fetch = async url => {
+    const address = String(url);
+    const entry = address.includes('path=')
+      ? { content: { $t: '<p>Short epilogue.</p>' } }
+      : {
+          title: { $t: 'Volume 1' },
+          link: [
+            {
+              rel: 'alternate',
+              href: 'https://eightysixar.blogspot.com/2026/01/volume.html',
+            },
+          ],
+          category: [{ term: 'Series' }, { term: 'Volume 1' }],
+          content: {
+            $t: '<div class="descManga"><p>First &amp; second<br>line</p><p>Last paragraph.</p></div>',
+          },
+        };
+    return response(url, JSON.stringify({ feed: { entry: [entry] } }));
+  };
+  const eightysix = await plugin('eightysixar.ts', true);
+  assert.equal(
+    load(await eightysix.parseChapter('/2026/01/chapter.html')).text(),
+    'Short epilogue.',
+  );
+  assert.equal(
+    (await eightysix.parseNovel('/2026/01/volume.html')).summary,
+    'First & second\nline\n\nLast paragraph.',
+  );
+  console.log(
+    'PASS: EightysixAR preserves short chapters and decoded multi-paragraph summaries',
+  );
+} finally {
+  globalThis.fetch = originalFetch;
+}
 const row = number =>
   `<li data-kol-chapter-row><a href="https://kolnovel.com/chapter-${number}/"><span data-kol-chapter-number="${number}">${number}</span><span data-kol-chapter-title>Chapter ${number}</span><time datetime="2026-10-24"/></a></li>`;
 const pages = [
@@ -593,6 +629,27 @@ try {
       .map((_, el) => load(el).text())
       .get(),
     paragraphs,
+  );
+} finally {
+  globalThis.fetch = originalFetch;
+}
+
+try {
+  globalThis.fetch = async url => {
+    const address = String(url);
+    if (address.endsWith('/ajax/chapters/'))
+      return response(url, '<html><title>Not found</title></html>');
+    return response(
+      url,
+      '<div class="post-title"><h1>Fixture</h1></div><li class="wp-manga-chapter"><a href="https://hizomanga.net/content/fixture/1/">Chapter 1</a></li>',
+    );
+  };
+  const hizo = await plugin('HizoManga[madara].ts', true);
+  const novel = await hizo.parseNovel('content/fixture/');
+  assert.equal(novel.chapters.length, 1);
+  assert.equal(novel.chapters[0].path, 'content/fixture/1/');
+  console.log(
+    'PASS: Hizo retains embedded chapters when its AJAX endpoint returns an error page',
   );
 } finally {
   globalThis.fetch = originalFetch;

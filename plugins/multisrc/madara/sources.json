@@ -127,7 +127,8 @@
     "sourceName": "HizoManga",
     "options": {
       "useNewChapterEndpoint": true,
-      "lang": "Arabic"
+      "lang": "Arabic",
+      "versionIncrements": 1
     }
   },
   {

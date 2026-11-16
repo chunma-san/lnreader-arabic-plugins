@@ -621,12 +621,14 @@ export class MadaraPlugin implements Plugin.PluginBase {
       }).then((res: Response) => res.text());
     }
 
-    if (
-      html !== '0' &&
-      html &&
-      (this.id !== 'riwyat' || parseHTML(html)('.wp-manga-chapter').length)
-    ) {
-      loadedCheerio = parseHTML(html);
+    if (html !== '0' && html) {
+      const ajaxDocument = parseHTML(html);
+      if (
+        !['riwyat', 'hizomanga'].includes(this.id) ||
+        ajaxDocument('.wp-manga-chapter').length
+      ) {
+        loadedCheerio = ajaxDocument;
+      }
     }
 
     const chapterElements = loadedCheerio('.wp-manga-chapter');

@@ -57,3 +57,7 @@ For source fixes and new sites, read the [maintenance guide](docs/arabic-mainten
 Maintained by [chunma-san](https://github.com/chunma-san). Based on the work of [LNReader Plugins](https://github.com/LNReader/lnreader-plugins) developers and contributors, with original authorship and the [MIT license](LICENSE) preserved.
 
 This fork is independent of LNReader and the content providers. The [source blacklist](BLACKLIST.json) is retained and checked before adding new sites. No upstream pull requests or comments are submitted automatically.
+
+## Source health update (2026-11-16)
+
+Added the reviewed upstream EightysixAR source. HizoManga now retains embedded chapters when its chapter endpoint returns an error page. Health checks distinguish CAPTCHA and rate limits from scraper or setup failures and still probe historically unavailable sources. Live testing still found a chapterless HizoManga sample and an empty Seanovel API response; build success does not establish site availability.

@@ -37,7 +37,7 @@ class EightysixAR implements Plugin.PluginBase {
   name = 'EightysixAR';
   icon = 'src/ar/eightysixar/icon.png';
   site = 'https://eightysixar.blogspot.com';
-  version = '1.0.0';
+  version = '1.0.1';
   filters: Filters | undefined = undefined;
   private volumeCache?: { at: number; entries: FeedEntry[] };
 
@@ -156,11 +156,14 @@ class EightysixAR implements Plugin.PluginBase {
     const artist = $('.artist-name').first().text().trim();
     if (artist) novel.artist = artist;
     const summary = $('.descManga p')
-      .first()
-      .html()
-      ?.replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<[^>]+>/g, '')
-      .trim();
+      .map((_, paragraph) => {
+        const node = $(paragraph).clone();
+        node.find('br').replaceWith('\n');
+        return node.text().trim();
+      })
+      .get()
+      .filter(Boolean)
+      .join('\n\n');
     if (summary) novel.summary = summary;
 
     if (categories.includes('Completed')) novel.status = NovelStatus.Completed;
@@ -199,7 +202,7 @@ class EightysixAR implements Plugin.PluginBase {
     content.find('script,style,iframe,noscript,form').remove();
     const chapter = content.html()?.trim() || '';
     const hasImages = content.find('img').length > 0;
-    if (!hasImages && content.text().trim().length < 100)
+    if (!hasImages && !content.text().trim())
       throw new Error('EightysixAR: no readable chapter text was found.');
     return chapter;
   }
