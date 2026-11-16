@@ -12,6 +12,12 @@ Bundles your plugin with esbuild the same way the production build does, then ru
 live site — calling `popularNovels`, `searchNovels`, `parseNovel`, and `parseChapter` in sequence,
 using your plugin's own default filter values (the same values the app would send).
 
+The chapter check samples up to three popular novels when a valid novel has an
+empty chapter list. This accommodates announced titles without published chapters.
+Missing metadata, malformed results and request errors still fail immediately;
+three empty samples also fail. Run `node --test scripts/novel-sample.test.js` for
+the sampling regression checks.
+
 ```sh
 npm run check:plugin -- plugins/english/yourPlugin.ts
 ```

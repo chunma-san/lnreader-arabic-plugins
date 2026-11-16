@@ -28,7 +28,7 @@
     "build:arabic": "node scripts/arabic/build.js && node scripts/arabic/validate.js",
     "check:arabic": "node scripts/arabic/check.js",
     "generate:arabic": "node scripts/arabic/generate.js",
-    "test:arabic": "node scripts/arabic/test-redesign.js"
+    "test:arabic": "node scripts/arabic/test-redesign.js && node --test scripts/novel-sample.test.js"
   },
   "author": "LNReader",
   "license": "MIT",

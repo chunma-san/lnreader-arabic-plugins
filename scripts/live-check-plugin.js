@@ -12,6 +12,7 @@ import { createRequire } from 'module';
 import path, { dirname } from 'path';
 import fs from 'fs/promises';
 import os from 'os';
+import { loadNovelSample } from './novel-sample.js';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -167,31 +168,12 @@ async function runChecks(plugin) {
   steps.push(parseNovelStep);
   let novel;
   try {
-    novel = await withTimeout(
-      plugin.parseNovel(firstNovel.path),
-      STEP_TIMEOUT_MS,
-      'parseNovel',
+    const sample = await loadNovelSample(plugin, popular, (promise, label) =>
+      withTimeout(promise, STEP_TIMEOUT_MS, label),
     );
-    const isPagePlugin = typeof plugin.parsePage === 'function';
-    let chapters = novel?.chapters;
-    if (isPagePlugin && (!chapters || chapters.length === 0)) {
-      const page = await withTimeout(
-        plugin.parsePage(firstNovel.path, '1'),
-        STEP_TIMEOUT_MS,
-        'parsePage',
-      );
-      chapters = page?.chapters;
-    }
-    if (!novel?.name || !chapters || chapters.length === 0) {
-      parseNovelStep.status = 'FAIL';
-      parseNovelStep.detail = !novel?.name
-        ? 'Missing novel name'
-        : 'No chapters returned';
-      return steps;
-    }
+    novel = sample.novel;
     parseNovelStep.status = 'PASS';
-    parseNovelStep.detail = `${chapters.length} chapters`;
-    novel = { ...novel, chapters };
+    parseNovelStep.detail = `${novel.chapters.length} chapters (${sample.emptyCount} empty novels skipped)`;
   } catch (error) {
     const net = isNetworkOrBlockError(error);
     parseNovelStep.status = net.inconclusive ? 'INCONCLUSIVE' : 'FAIL';
