@@ -1,5 +1,5 @@
 {
-  "source": "65cd81084c76e19c7cc837050bb35eb13f7de450",
+  "source": "c89958b1eb210ce3724992f4b695574a1ed18470",
   "repository": "chunma-san/lnreader-arabic-plugins",
   "branch": "plugins/v3.0.0",
   "plugins": [
@@ -20,12 +20,16 @@
       "version": "1.0.3"
     },
     {
+      "id": "eightysixar",
+      "version": "1.0.1"
+    },
+    {
       "id": "galaxynovels",
       "version": "1.2.0"
     },
     {
       "id": "hizomanga",
-      "version": "2.3.0"
+      "version": "2.3.1"
     },
     {
       "id": "kolnovel",

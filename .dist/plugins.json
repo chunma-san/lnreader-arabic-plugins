@@ -36,6 +36,15 @@
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/dilartube/icon.png"
   },
   {
+    "id": "eightysixar",
+    "name": "EightysixAR",
+    "site": "https://eightysixar.blogspot.com",
+    "lang": "‎العربية",
+    "version": "1.0.1",
+    "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/eightysixar.js",
+    "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/src/ar/eightysixar/icon.png"
+  },
+  {
     "id": "galaxynovels",
     "name": "Galaxy Novels",
     "site": "https://galaxynovels.com/",
@@ -49,7 +58,7 @@
     "name": "HizoManga",
     "site": "https://hizomanga.net/",
     "lang": "‎العربية",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "url": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/.js/src/plugins/arabic/HizoManga%5Bmadara%5D.js",
     "iconUrl": "https://raw.githubusercontent.com/chunma-san/lnreader-arabic-plugins/plugins/v3.0.0/public/static/multisrc/madara/hizomanga/icon.png"
   },
